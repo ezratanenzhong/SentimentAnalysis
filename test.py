@@ -9,17 +9,11 @@ from nltk import pos_tag
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 
-st.title("Customer Review Analyzer")
-
-st.markdown("The analyzer can identify the sentiment label of reviews ")
 
 with st.sidebar:
     st.subheader('About')
     st.markdown('This is a web application to identify the sentiment label of reviews provided by customers.')
     st.markdown("Code: Github")
-
-app_mode = st.sidebar.selectbox('Select Page', ['Home', 'Single Review Prediction', 'Batch Review Prediction'])
-
 
 def predict_sentiment(input_text):
     loaded_model = pickle.load(open('finalized_model.pkl', 'rb'))
