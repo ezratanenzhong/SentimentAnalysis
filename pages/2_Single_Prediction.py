@@ -350,10 +350,10 @@ def clean_text(text):
 def predict_sentiment(input_text):
     loaded_model = pickle.load(open(model_path, 'rb'))
     loaded_vectorizer = pickle.load(open(vectorizer_path, 'rb'))
-    cleaned_text = clean_text(input_text)
+    #cleaned_text = clean_text(input_text)
     tv = loaded_vectorizer
 
-    review_tv = tv.transform([cleaned_text])
+    review_tv = tv.transform([input_text])
     model_predict = loaded_model.predict(review_tv)
     print("Predicted sentiment label: ", model_predict)
 
