@@ -14,21 +14,10 @@ st.title("Single Review Prediction")
 st.subheader('Predict the sentiment of a review provided by customers, whether is positive, negative or neutral.')
 text = st.text_input('Enter the review for which you want to know the sentiment:')
 
-
-def predict_sentiment(input_text):
-    loaded_model = pickle.load(open('finalized_model.pkl', 'rb'))
-    loaded_vectorizer = pickle.load(open('vectorizer.pkl', 'rb'))
-    cleaned_text = clean_text(input_text)
-    tv = loaded_vectorizer
-    review_tv = tv.transform([cleaned_text])
-    model_predict = loaded_model.predict(review_tv)
-    print("Predicted sentiment label: ", model_predict)
+model_path = 'C:\\Users\\user\\Desktop\\DS_Project\\finalized_model.pkl'
+vectorizer_path = 'C:\\Users\\user\\Desktop\\DS_Project\\vectorizer.pkl'
 
 
-submitted = st.button('Submit')
-if submitted:
-    predict_sentiment(text)
-    # st.success("You did it !")
 
 abbreviations = {
     "$": " dollar ",
@@ -357,3 +346,19 @@ def clean_text(text):
     text = lemmatization(text)
 
     return text
+
+def predict_sentiment(input_text):
+    loaded_model = pickle.load(open(model_path, 'rb'))
+    loaded_vectorizer = pickle.load(open(vectorizer_path, 'rb'))
+    cleaned_text = clean_text(input_text)
+    tv = loaded_vectorizer
+
+    review_tv = tv.transform([cleaned_text])
+    model_predict = loaded_model.predict(review_tv)
+    print("Predicted sentiment label: ", model_predict)
+
+
+submitted = st.button('Submit')
+if submitted:
+    predict_sentiment(text)
+    # st.success("You did it !")
