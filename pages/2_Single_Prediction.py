@@ -22,8 +22,6 @@ text = st.text_input('Enter the review for which you want to know the sentiment:
 model_path = 'finalized_model.pkl'
 vectorizer_path = 'vectorizer.pkl'
 
-
-
 abbreviations = {
     "$": " dollar ",
     "€": " euro ",
@@ -352,6 +350,7 @@ def clean_text(text):
 
     return text
 
+
 def predict_sentiment(input_text):
     loaded_model = pickle.load(open(model_path, 'rb'))
     loaded_vectorizer = pickle.load(open(vectorizer_path, 'rb'))
@@ -367,4 +366,11 @@ def predict_sentiment(input_text):
 submitted = st.button('Submit')
 if submitted:
     result = predict_sentiment(text)
-    st.write("Predicted sentiment label: ", result)
+    if result == "['positive']"
+        st.success("Predicted sentiment label: ", result)
+    elif result == "['negative']"
+        st.warning("Predicted sentiment label: ", result)
+    else:
+        st.write("Predicted sentiment label: ", result)
+else:
+    st.warning("Please enter a review")
