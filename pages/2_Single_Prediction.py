@@ -354,13 +354,14 @@ def predict_sentiment(input_text):
     tv = loaded_vectorizer
 
     review_tv = tv.transform([input_text])
-    model_predict = loaded_model.predict(review_tv)
-    return model_predict
+    prediction = loaded_model.predict(review_tv)
+    prediction = np.array2string(prediction)
+    return prediction
     
 
 
 submitted = st.button('Submit')
 if submitted:
     result = predict_sentiment(text)
-    st.write("Predicted sentiment label: ")
+    st.write("Predicted sentiment label: ", result)
     st.write(result)
