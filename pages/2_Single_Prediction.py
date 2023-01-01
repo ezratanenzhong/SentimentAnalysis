@@ -14,8 +14,8 @@ st.title("Single Review Prediction")
 st.subheader('Predict the sentiment of a review provided by customers, whether is positive, negative or neutral.')
 text = st.text_input('Enter the review for which you want to know the sentiment:')
 
-model_path = 'C:\\Users\\user\\Desktop\\DS_Project\\finalized_model.pkl'
-vectorizer_path = 'C:\\Users\\user\\Desktop\\DS_Project\\vectorizer.pkl'
+model_path = 'finalized_model.pkl'
+vectorizer_path = 'vectorizer.pkl'
 
 
 
