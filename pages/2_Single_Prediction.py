@@ -356,21 +356,34 @@ def predict_sentiment(input_text):
     loaded_vectorizer = pickle.load(open(vectorizer_path, 'rb'))
     cleaned_text = clean_text(input_text)
     tv = loaded_vectorizer
-
     review_tv = tv.transform([cleaned_text])
     prediction = loaded_model.predict(review_tv)
     prediction = np.array2string(prediction)
     return prediction
     
+def predict_sentiment_proba(review):
+  cleaned_review = clean_text(review)
+  tv = loaded_vectorizer
+  review_tv = tv.transform([cleaned_review])
+  prediction_proba = loaded_model.predict_proba(review_tv) * 100
+  prediction_proba = pd.DataFrame(prediction_proba)
+  prediction_proba = prediction_proba.transpose()
+  return prediction_proba
 
 submitted = st.button('Submit')
 if submitted:
     result = predict_sentiment(text)
-    if result == "['positive']"
+    if result == "['positive']":
         st.success("Predicted sentiment label: ", result)
-    elif result == "['negative']"
-        st.warning("Predicted sentiment label: ", result)
+    elif result == "['negative']":
+        st.error("Predicted sentiment label: ", result)
     else:
-        st.write("Predicted sentiment label: ", result)
+        st.warning("Predicted sentiment label: ", result)
+    probability = predict_sentiment_proba(text)
+    sentiment = ['negative', 'neutral', 'positive']
+    confidence_df = pd.DataFrame(sentiment, columns = ['sentiment'])
+    confidence_df = confidence_df.assign(label=probability)
+    confidence_df = confidence_df.rename(columns={confidence_df.columns[1]: 'probability (%)'})
+    st.write(confidence_df)
 else:
     st.warning("Please enter a review")
