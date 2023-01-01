@@ -4,18 +4,16 @@ import string
 import re
 import numpy as np
 import pickle
-import streamlit as st
-import pandas as pd
-import string
-import re
-import numpy as np
-import pickle
 import nltk
 from nltk import pos_tag
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 
-st.title("Customer Review Analyzer")
+st.set_page_config(
+    page_title="Customer Review Analyzer",
+)
+
+st.title("Welcome to Customer Review Analyzer")
 
 st.markdown("The analyzer can identify the sentiment label of reviews ")
 
