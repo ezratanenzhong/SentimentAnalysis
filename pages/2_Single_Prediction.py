@@ -364,5 +364,5 @@ submitted = st.button('Submit')
 if submitted:
     predict_sentiment(text)
     st.write("Predicted sentiment label: ")
-    if model_predict == '['positive']':
+    if model_predict == "['positive']":
         st.success("Positive review. Keep it up!")
