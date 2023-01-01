@@ -373,12 +373,13 @@ def predict_sentiment_proba(review):
 submitted = st.button('Submit')
 if submitted:
     result = predict_sentiment(text)
+    st.write("Predicted sentiment label: ")
     if result == "['positive']":
-        st.success("Predicted sentiment label: ", result)
+        st.success(result)
     elif result == "['negative']":
-        st.error("Predicted sentiment label: ", result)
+        st.error(result)
     else:
-        st.warning("Predicted sentiment label: ", result)
+        st.warning(result)
     probability = predict_sentiment_proba(text)
     sentiment = ['negative', 'neutral', 'positive']
     confidence_df = pd.DataFrame(sentiment, columns = ['sentiment'])
