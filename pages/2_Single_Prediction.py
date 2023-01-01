@@ -362,13 +362,13 @@ def predict_sentiment(input_text):
     return prediction
     
 def predict_sentiment_proba(review):
-  cleaned_review = clean_text(review)
-  tv = loaded_vectorizer
-  review_tv = tv.transform([cleaned_review])
-  prediction_proba = loaded_model.predict_proba(review_tv) * 100
-  prediction_proba = pd.DataFrame(prediction_proba)
-  prediction_proba = prediction_proba.transpose()
-  return prediction_proba
+    cleaned_review = clean_text(review)
+    tv = loaded_vectorizer
+    review_tv = tv.transform([cleaned_review])
+    prediction_proba = loaded_model.predict_proba(review_tv) * 100
+    prediction_proba = pd.DataFrame(prediction_proba)
+    prediction_proba = prediction_proba.transpose()
+    return prediction_proba
 
 submitted = st.button('Submit')
 if submitted:
