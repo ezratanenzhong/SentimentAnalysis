@@ -9,6 +9,11 @@ from nltk import pos_tag
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 
+import nltk
+nltk.download('wordnet')
+nltk.download('omw-1.4')
+nltk.download('punkt')
+nltk.download('stopwords')
 
 st.title("Single Review Prediction")
 st.subheader('Predict the sentiment of a review provided by customers, whether is positive, negative or neutral.')
@@ -350,18 +355,16 @@ def clean_text(text):
 def predict_sentiment(input_text):
     loaded_model = pickle.load(open(model_path, 'rb'))
     loaded_vectorizer = pickle.load(open(vectorizer_path, 'rb'))
-    #cleaned_text = clean_text(input_text)
+    cleaned_text = clean_text(input_text)
     tv = loaded_vectorizer
 
-    review_tv = tv.transform([input_text])
+    review_tv = tv.transform([cleaned_text])
     prediction = loaded_model.predict(review_tv)
     prediction = np.array2string(prediction)
     return prediction
     
 
-
 submitted = st.button('Submit')
 if submitted:
     result = predict_sentiment(text)
     st.write("Predicted sentiment label: ", result)
-    st.write(result)
