@@ -361,8 +361,10 @@ def predict_sentiment(input_text):
     prediction = np.array2string(prediction)
     return prediction
     
-def predict_sentiment_proba(review):
-    cleaned_review = clean_text(review)
+def predict_sentiment_proba(input_text):
+    loaded_model = pickle.load(open(model_path, 'rb'))
+    loaded_vectorizer = pickle.load(open(vectorizer_path, 'rb'))
+    cleaned_review = clean_text(input_text)
     tv = loaded_vectorizer
     review_tv = tv.transform([cleaned_review])
     prediction_proba = loaded_model.predict_proba(review_tv) * 100
