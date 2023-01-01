@@ -355,7 +355,7 @@ def predict_sentiment(input_text):
 
     review_tv = tv.transform([input_text])
     model_predict = loaded_model.predict(review_tv)
-    
+    model_predict = model_predict.astype('str') 
     return model_predict
     
 
