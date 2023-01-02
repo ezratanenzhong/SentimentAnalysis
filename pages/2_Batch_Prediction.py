@@ -17,7 +17,7 @@ st.header("Batch Review Prediction")
 st.markdown('Predict the sentiment of multiple reviews, whether is positive, negative or neutral.')
 st.write('Upload a CSV file which contains two column only - the index and text column. See example below:')
 example = pd.read_csv("example.csv")
-st.write(example)
+st.write(example.head())
 upload_file = st.file_uploader("Upload file", type=["csv"])
 
 model_path = 'finalized_model.pkl'
@@ -382,12 +382,9 @@ if upload_file is not None:
 
     # Plot distribution of sentiment
     # funnel chart
-        # Plot distribution of sentiment
-    # funnel chart
-    # Funnel-Chart
     count = result_df.groupby('label').count()['text'].reset_index().sort_values(by='text', ascending=False)
     fig = go.Figure(go.Funnelarea(
-        text=count.sentiment,
+        text=count.label,
         values=count.text,
         title={"position": "top center", "text": "Funnel-Chart of Sentiment Distribution"}
     ))
