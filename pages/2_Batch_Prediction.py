@@ -366,15 +366,18 @@ def predict_sentiment_batch(review):
 if upload_file is not None:
     df = pd.read_csv(upload_file)
     df = df.drop(columns=['Unnamed: 0'])
-    df = df.rename(columns={df.columns[0]: 'text'}, inplace=True)
-    st.write(df)
-    
-    predict_output = pd.DataFrame(predict_sentiment_batch(df))
+    input_list = df['text'].tolist()
+    predict_output = pd.DataFrame(predict_sentiment_batch(input_list))
     result_df = df.assign(label=predict_output)
     st.subheader('Result')
-    st.markdown('Output (first five rows)')
+    st.markdown('Text with sentiment label (first five rows)')
     st.write(result_df.head())
-    st.download_button('Download', result_df)
+    @st.cache
+    def convert_df(result_df):
+        # IMPORTANT: Cache the conversion to prevent computation on every rerun
+        return result_df.to_csv().encode('utf-8')
+    csv = convert_df(result_df)
+    st.download_button(label="Download data as CSV", data=csv, file_name='output.csv',mime='text/csv')
 
     # Plot distribution of sentiment
     # funnel chart
