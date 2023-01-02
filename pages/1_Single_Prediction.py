@@ -14,8 +14,13 @@ nltk.download('omw-1.4')
 nltk.download('punkt')
 nltk.download('stopwords')
 
+with st.sidebar:
+    st.write('This page can analyze the sentiment of a single review.')
+    st.write(' - Enter the review in the text area and click the Analyse button')
+    st.write(' - The output will show the predicted sentiment label of the review.')
+    st.write(' - View the class probabilities for the input data points (i.e. the probability that a particular data point falls into the underlying classes).')
+
 st.header("Single Review Prediction")
-st.markdown('Predict the sentiment of a customer review, whether is positive, negative or neutral.')
 text = st.text_input('Enter the review for which you want to know the sentiment:')
 
 model_path = 'finalized_model.pkl'
@@ -370,8 +375,8 @@ def predict_sentiment_proba(input_text):
     return prediction_proba
 
 
-submitted = st.button('Submit')
-if submitted:
+submitted = st.button('Analyse')
+if submitted :
     result = predict_sentiment(text)
     st.write("### Predicted sentiment label: ")
     if result == "['positive']":
@@ -385,6 +390,7 @@ if submitted:
     confidence_df = pd.DataFrame(sentiment, columns=['sentiment'])
     confidence_df = confidence_df.assign(label=probability)
     confidence_df = confidence_df.rename(columns={confidence_df.columns[1]: 'probability (%)'})
+    st.subheader('Class probabilities')
     st.write(confidence_df)
 else:
     st.warning("Please enter a review")
