@@ -370,25 +370,29 @@ if upload_file is not None:
     input_list = df['text'].tolist()
     predict_output = pd.DataFrame(predict_sentiment_batch(input_list))
     result_df = df.assign(label=predict_output)
-    st.subheader('Result')
-    st.markdown('Text with sentiment label')
-    st.write(result_df)
-    @st.cache
-    def convert_df(result_df):
-        # IMPORTANT: Cache the conversion to prevent computation on every rerun
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        st.subheader('Result')
+        st.info('Table with text and its sentiment label')
+        st.write(result_df)
+        @st.cache
+        def convert_df(result_df):
+            # IMPORTANT: Cache the conversion to prevent computation on every rerun
         return result_df.to_csv().encode('utf-8')
-    csv = convert_df(result_df)
-    st.download_button(label="Download data as CSV", data=csv, file_name='output.csv',mime='text/csv')
-
-    # Plot distribution of sentiment
-    # funnel chart
-    count = result_df.groupby('label').count()['text'].reset_index().sort_values(by='text', ascending=False)
-    fig = go.Figure(go.Funnelarea(
-        text=count.label,
-        values=count.text,
-        title={"position": "top center", "text": "Funnel-Chart of Sentiment Distribution"}
-    ))
-    st.plotly_chart(fig, theme="streamlit")
+        csv = convert_df(result_df)
+        st.download_button(label="Download data as CSV", data=csv, file_name='output.csv',mime='text/csv')
+    
+    with col2:        
+        # Plot distribution of sentiment
+        # funnel chart
+        count = result_df.groupby('label').count()['text'].reset_index().sort_values(by='text', ascending=False)
+        fig = go.Figure(go.Funnelarea(
+            text=count.label,
+            values=count.text,
+            title={"position": "top center", "text": "Funnel-Chart of Sentiment Distribution"}
+        ))
+        st.plotly_chart(fig, theme="streamlit")
     
 else:
     st.warning('Please upload the file in the required format')
