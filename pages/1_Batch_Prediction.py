@@ -14,8 +14,10 @@ nltk.download('stopwords')
 
 st.header("Batch Review Prediction")
 st.markdown('Predict the sentiment of multiple reviews, whether is positive, negative or neutral.')
-st.write('### Upload a CSV file which contain one column only - the reviews column')
-upload_file = st.file_uploader("Upload file below", type=["csv"])
+st.write('Upload a CSV file which contain one column only - the reviews column. See example below:')
+example = pd.read_csv('example_data.csv')
+st.write(example.head())
+upload_file = st.file_uploader("Upload file", type=["csv"])
 
 model_path = 'finalized_model.pkl'
 vectorizer_path = 'vectorizer.pkl'
@@ -366,7 +368,8 @@ if upload_file:
         df = pd.read_csv(upload_file)
         df = df.drop(columns=['Unnamed: 0'])
         df = df.rename(columns={df.columns[0]: 'text'}, inplace=True)
-        predict_output = pd.DataFrame(predict_sentiment_batch(list(df['text'])))
+        reviews = list(df['text'])
+        predict_output = pd.DataFrame(predict_sentiment_batch(reviews))
         result_df = df.assign(label=predict_output)
         st.subheader('Result')
         st.markdown('Output (first five rows)')
