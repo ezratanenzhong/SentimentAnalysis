@@ -378,8 +378,8 @@ if upload_file is not None:
         st.write(result_df)
         @st.cache
         def convert_df(result_df):
-            # IMPORTANT: Cache the conversion to prevent computation on every rerun
-        return result_df.to_csv().encode('utf-8')
+            # Cache the conversion to prevent computation on every rerun
+            return result_df.to_csv().encode('utf-8')
         csv = convert_df(result_df)
         st.download_button(label="Download data as CSV", data=csv, file_name='output.csv',mime='text/csv')
     
