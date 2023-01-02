@@ -5,7 +5,6 @@ import re
 import numpy as np
 import pickle
 import nltk
-from nltk import pos_tag
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 
@@ -15,12 +14,14 @@ nltk.download('omw-1.4')
 nltk.download('punkt')
 nltk.download('stopwords')
 
-st.title("Single Review Prediction")
-st.subheader('Predict the sentiment of a review provided by customers, whether is positive, negative or neutral.')
+st.header("Single Review Prediction")
+st.markdown('Predict the sentiment of a customer review, whether is positive, negative or neutral.')
 text = st.text_input('Enter the review for which you want to know the sentiment:')
 
 model_path = 'finalized_model.pkl'
 vectorizer_path = 'vectorizer.pkl'
+model = pickle.load(open(model_path, 'rb'))
+vectorizer = pickle.load(open(vectorizer_path, 'rb'))
 
 abbreviations = {
     "$": " dollar ",
@@ -350,32 +351,29 @@ def clean_text(text):
 
     return text
 
-
+# prediction
 def predict_sentiment(input_text):
-    loaded_model = pickle.load(open(model_path, 'rb'))
-    loaded_vectorizer = pickle.load(open(vectorizer_path, 'rb'))
     cleaned_text = clean_text(input_text)
-    tv = loaded_vectorizer
-    review_tv = tv.transform([cleaned_text])
-    prediction = loaded_model.predict(review_tv)
+    review_tv = vectorizer.transform([cleaned_text])
+    prediction = model.predict(review_tv)
     prediction = np.array2string(prediction)
     return prediction
-    
+
+
+# prediction probability
 def predict_sentiment_proba(input_text):
-    loaded_model = pickle.load(open(model_path, 'rb'))
-    loaded_vectorizer = pickle.load(open(vectorizer_path, 'rb'))
     cleaned_review = clean_text(input_text)
-    tv = loaded_vectorizer
-    review_tv = tv.transform([cleaned_review])
-    prediction_proba = loaded_model.predict_proba(review_tv) * 100
+    review_tv = vectorizer.transform([cleaned_review])
+    prediction_proba = model.predict_proba(review_tv) * 100
     prediction_proba = pd.DataFrame(prediction_proba)
     prediction_proba = prediction_proba.transpose()
     return prediction_proba
 
+
 submitted = st.button('Submit')
 if submitted:
     result = predict_sentiment(text)
-    st.write("Predicted sentiment label: ")
+    st.write("### Predicted sentiment label: ")
     if result == "['positive']":
         st.success(result)
     elif result == "['negative']":
@@ -384,7 +382,7 @@ if submitted:
         st.warning(result)
     probability = predict_sentiment_proba(text)
     sentiment = ['negative', 'neutral', 'positive']
-    confidence_df = pd.DataFrame(sentiment, columns = ['sentiment'])
+    confidence_df = pd.DataFrame(sentiment, columns=['sentiment'])
     confidence_df = confidence_df.assign(label=probability)
     confidence_df = confidence_df.rename(columns={confidence_df.columns[1]: 'probability (%)'})
     st.write(confidence_df)
