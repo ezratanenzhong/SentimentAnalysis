@@ -368,21 +368,16 @@ if upload_file is not None:
     df = df.drop(columns=['Unnamed: 0'])
     df = df.rename(columns={df.columns[0]: 'text'}, inplace=True)
     st.write(df)
-    """predict_output = pd.DataFrame(predict_sentiment_batch(list(df['text'])))
+    input_list = list(df['text'])
+    predict_output = pd.DataFrame(predict_sentiment_batch(input_list))
     result_df = df.assign(label=predict_output)
     st.subheader('Result')
     st.markdown('Output (first five rows)')
     st.write(result_df.head())
 """
-    download = st.button('Download')
-    if download:
-        # export resulting dataframe as csv file
-        #result_df.to_csv('result.csv', index=False)
+    #st.download_button('Download', result_df)
 
     # Plot distribution of sentiment
     # funnel chart
-else:
-    st.warning('Please upload the file in the required format')
-
 else:
     st.warning('Please upload the file in the required format')
