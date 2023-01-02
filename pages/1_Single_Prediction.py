@@ -21,7 +21,7 @@ with st.sidebar:
     st.write(' - View the class probabilities for the input data points (i.e. the probability that a particular data point falls into the underlying classes).')
 
 st.header("Single Review Prediction")
-text = st.text_input('Enter the review for which you want to know the sentiment:')
+input_text = st.text_input('Enter the review for which you want to know the sentiment:')
 
 model_path = 'finalized_model.pkl'
 vectorizer_path = 'vectorizer.pkl'
@@ -376,8 +376,8 @@ def predict_sentiment_proba(input_text):
 
 
 submitted = st.button('Analyse')
-if submitted :
-    result = predict_sentiment(text)
+if (submitted AND input_text != "" ):
+    result = predict_sentiment(input_text)
     st.write("### Predicted sentiment label: ")
     if result == "['positive']":
         st.success(result)
@@ -385,12 +385,12 @@ if submitted :
         st.error(result)
     else:
         st.warning(result)
-    probability = predict_sentiment_proba(text)
+    probability = predict_sentiment_proba(input_text)
     sentiment = ['negative', 'neutral', 'positive']
-    confidence_df = pd.DataFrame(sentiment, columns=['sentiment'])
-    confidence_df = confidence_df.assign(label=probability)
-    confidence_df = confidence_df.rename(columns={confidence_df.columns[1]: 'probability (%)'})
+    proba_df = pd.DataFrame(sentiment, columns=['sentiment'])
+    proba_df = proba_df.assign(label=probability)
+    proba_df = proba_df.rename(columns={proba_df.columns[1]: 'probability (%)'})
     st.subheader('Class probabilities')
-    st.write(confidence_df)
+    st.write(proba_df)
 else:
     st.warning("Please enter a review")
