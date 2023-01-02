@@ -14,10 +14,13 @@ nltk.download('punkt')
 nltk.download('stopwords')
 
 with st.sidebar:
-    st.write('This page can analyze the sentiment of multiple reviews stored in file, whether is positive, negative or neutral.')
+    st.write('This page can analyze the sentiment of multiple reviews.')
+    st.write(' - Upload a file in the required format and let the analyzer do the work!')
+    st.write(' - A table with the review text and their sentiment labels will be displayed.')
+    st.write(' - View the distribution plot of the sentiment labels of the data')
 
 st.header("Batch Review Prediction")
-st.write('Upload a CSV file which contains one column only - the text column. See example below:')
+st.write('Upload a CSV file which contains *one column* only - the text column. See example below:')
 example = pd.read_csv("example.csv")
 st.write(example.head())
 upload_file = st.file_uploader("Upload file", type=["csv"])
