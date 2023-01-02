@@ -367,10 +367,9 @@ if upload_file is not None:
     df = pd.read_csv(upload_file)
     df = df.drop(columns=['Unnamed: 0'])
     df = df.rename(columns={df.columns[0]: 'text'}, inplace=True)
-    df = df['text']
     st.write(df)
     
-    predict_output = pd.DataFrame(predict_sentiment_batch(df))
+    predict_output = pd.DataFrame(predict_sentiment_batch(df['text'))
     result_df = df.assign(label=predict_output)
     st.subheader('Result')
     st.markdown('Output (first five rows)')
