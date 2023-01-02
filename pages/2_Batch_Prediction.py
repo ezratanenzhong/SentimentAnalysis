@@ -15,7 +15,7 @@ nltk.download('stopwords')
 
 st.header("Batch Review Prediction")
 st.markdown('Predict the sentiment of multiple reviews, whether is positive, negative or neutral.')
-st.write('Upload a CSV file which contains two column only - the index and text column. See example below:')
+st.write('Upload a CSV file which contains one column only - the text column. See example below:')
 example = pd.read_csv("example.csv")
 st.write(example.head())
 upload_file = st.file_uploader("Upload file", type=["csv"])
@@ -371,8 +371,8 @@ if upload_file is not None:
     predict_output = pd.DataFrame(predict_sentiment_batch(input_list))
     result_df = df.assign(label=predict_output)
     st.subheader('Result')
-    st.markdown('Text with sentiment label (first five rows)')
-    st.write(result_df.head())
+    st.markdown('Text with sentiment label')
+    st.write(result_df)
     @st.cache
     def convert_df(result_df):
         # IMPORTANT: Cache the conversion to prevent computation on every rerun
@@ -388,7 +388,7 @@ if upload_file is not None:
         values=count.text,
         title={"position": "top center", "text": "Funnel-Chart of Sentiment Distribution"}
     ))
-    st.write(fig.show())
+    st.plotly_chart(fig, theme="streamlit")
     
 else:
     st.warning('Please upload the file in the required format')
