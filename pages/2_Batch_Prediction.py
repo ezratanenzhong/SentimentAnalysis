@@ -366,7 +366,7 @@ def predict_sentiment_batch(review):
 
 if upload_file is not None:
     df = pd.read_csv(upload_file)
-    df = df.drop(columns=['Unnamed: 0'])
+    #df = df.drop(columns=['Unnamed: 0'])
     input_list = df['text'].tolist()
     predict_output = pd.DataFrame(predict_sentiment_batch(input_list))
     result_df = df.assign(label=predict_output)
@@ -388,7 +388,7 @@ if upload_file is not None:
         values=count.text,
         title={"position": "top center", "text": "Funnel-Chart of Sentiment Distribution"}
     ))
-    fig.show()
+    st.write(fig.show())
     
 else:
     st.warning('Please upload the file in the required format')
