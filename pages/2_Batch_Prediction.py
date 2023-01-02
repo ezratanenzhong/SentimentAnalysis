@@ -4,6 +4,7 @@ import string
 import re
 import numpy as np
 import pickle
+from plotly import graph_objs as go
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 import nltk
@@ -14,9 +15,9 @@ nltk.download('stopwords')
 
 st.header("Batch Review Prediction")
 st.markdown('Predict the sentiment of multiple reviews, whether is positive, negative or neutral.')
-st.write('Upload a CSV file which contains one column only - the reviews column. See example below:')
-#example = pd.read_csv("example_data.csv")
-#st.write(example)
+st.write('Upload a CSV file which contains two column only - the index and text column. See example below:')
+example = pd.read_csv("example.csv")
+st.write(example)
 upload_file = st.file_uploader("Upload file", type=["csv"])
 
 model_path = 'finalized_model.pkl'
@@ -381,5 +382,16 @@ if upload_file is not None:
 
     # Plot distribution of sentiment
     # funnel chart
+        # Plot distribution of sentiment
+    # funnel chart
+    # Funnel-Chart
+    count = result_df.groupby('label').count()['text'].reset_index().sort_values(by='text', ascending=False)
+    fig = go.Figure(go.Funnelarea(
+        text=count.sentiment,
+        values=count.text,
+        title={"position": "top center", "text": "Funnel-Chart of Sentiment Distribution"}
+    ))
+    fig.show()
+    
 else:
     st.warning('Please upload the file in the required format')
