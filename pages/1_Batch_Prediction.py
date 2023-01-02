@@ -4,44 +4,23 @@ import string
 import re
 import numpy as np
 import pickle
-import nltk
-from nltk import pos_tag
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
+import nltk
+nltk.download('wordnet')
+nltk.download('omw-1.4')
+nltk.download('punkt')
+nltk.download('stopwords')
 
-st.title("Batch Prediction")
-st.title("Batch Review Prediction")
-st.subheader('Predict the sentiment of multiple reviews, whether is positive, negative or neutral.')
-upload_file = st.file_uploader("Upload a CSV file which contain one column only - the reviews column", type=["csv"])
+st.header("Batch Review Prediction")
+st.markdown('Predict the sentiment of multiple reviews, whether is positive, negative or neutral.')
+st.write('### Upload a CSV file which contain one column only - the reviews column')
+upload_file = st.file_uploader("Upload file below", type=["csv"])
 
-def predict_sentiment_batch(review):
-    loaded_model = pickle.load(open('finalized_model.pkl', 'rb'))
-    loaded_vectorizer = pickle.load(open('vectorizer.pkl', 'rb'))
-    label_list = []
-    for input_text in review:
-        cleaned_text = clean_text(input_text)
-        tv = loaded_vectorizer
-        text_tv = tv.transform([cleaned_text])
-        prediction = loaded_model.predict(text_tv)
-        label_list.append(prediction)
-    output = pd.DataFrame(data=label_list, columns=['label'])
-    return output
-
-if upload_file:
-    if upload_file is not None:
-        df = pd.read_csv(upload_file)
-        df = df.drop(columns=['Unnamed: 0'])
-        df = df.rename(columns={df.columns[0]: 'text'}, inplace=True)
-        predict_output = pd.DataFrame(predict_sentiment_batch(list(df['text'])))
-        result_df = df.assign(label=predict_output)
-        st.subheader('Result')
-        st.markdown('Output (first five rows)')
-        st.write(result_df.head())
-
-        # Plot distribution of sentiment
-        # funnel chart
-    else:
-        st.warning('Please upload the file in the required format')
+model_path = 'finalized_model.pkl'
+vectorizer_path = 'vectorizer.pkl'
+model = pickle.load(open(model_path, 'rb'))
+vectorizer = pickle.load(open(vectorizer_path, 'rb'))
 
 abbreviations = {
     "$": " dollar ",
@@ -370,3 +349,30 @@ def clean_text(text):
     text = lemmatization(text)
 
     return text
+
+# prediction
+def predict_sentiment_batch(review):
+    label_list = []
+    for input_text in review:
+        cleaned_text = clean_text(input_text)
+        text_tv = vectorizer.transform([cleaned_text])
+        prediction = model.predict(text_tv)
+        label_list.append(prediction)
+    output = pd.DataFrame(data=label_list, columns=['label'])
+    return output
+
+if upload_file:
+    if upload_file is not None:
+        df = pd.read_csv(upload_file)
+        df = df.drop(columns=['Unnamed: 0'])
+        df = df.rename(columns={df.columns[0]: 'text'}, inplace=True)
+        predict_output = pd.DataFrame(predict_sentiment_batch(list(df['text'])))
+        result_df = df.assign(label=predict_output)
+        st.subheader('Result')
+        st.markdown('Output (first five rows)')
+        st.write(result_df.head())
+
+        # Plot distribution of sentiment
+        # funnel chart
+    else:
+        st.warning('Please upload the file in the required format')
