@@ -370,25 +370,22 @@ if upload_file is not None:
     input_list = df['text'].tolist()
     predict_output = pd.DataFrame(predict_sentiment_batch(input_list))
     result_df = df.assign(label=predict_output)
+    st.subheader('Result')
+    st.info('Table with text and its sentiment label')
+    st.write(result_df)
+    @st.cache
+    def convert_df(result_df):
+        # Cache the conversion to prevent computation on every rerun
+        return result_df.to_csv().encode('utf-8')
+    csv = convert_df(result_df)
+    st.download_button(label="Download data as CSV", data=csv, file_name='output.csv',mime='text/csv')
     
-    col1, col2 = st.columns(2)
-    with col1:
-        st.subheader('Result')
-        st.info('Table with text and its sentiment label')
-        st.write(result_df)
-        @st.cache
-        def convert_df(result_df):
-            # Cache the conversion to prevent computation on every rerun
-            return result_df.to_csv().encode('utf-8')
-        csv = convert_df(result_df)
-        st.download_button(label="Download data as CSV", data=csv, file_name='output.csv',mime='text/csv')
-    
-    with col2:        
-        # Plot distribution of sentiment
-        # funnel chart
+    plot = st.button('Plot sentiment distribution')
+    if plot:
+        # Plot distribution of sentiment using Funnel-Chart
         count = result_df.groupby('label').count()['text'].reset_index().sort_values(by='text', ascending=False)
         fig = go.Figure(go.Funnelarea(
-            text=count.label,
+            text=count.sentiment,
             values=count.text,
             title={"position": "top center", "text": "Funnel-Chart of Sentiment Distribution"}
         ))
