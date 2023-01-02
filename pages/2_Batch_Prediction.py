@@ -14,9 +14,9 @@ nltk.download('stopwords')
 
 st.header("Batch Review Prediction")
 st.markdown('Predict the sentiment of multiple reviews, whether is positive, negative or neutral.')
-st.write('Upload a CSV file which contain one column only - the reviews column. See example below:')
-example = pd.read_csv('example_data.csv')
-st.write(example)
+st.write('Upload a CSV file which contains one column only - the reviews column. See example below:')
+#example = pd.read_csv("example_data.csv")
+#st.write(example)
 upload_file = st.file_uploader("Upload file", type=["csv"])
 
 model_path = 'finalized_model.pkl'
@@ -363,19 +363,26 @@ def predict_sentiment_batch(review):
     output = pd.DataFrame(data=label_list, columns=['label'])
     return output
 
-if upload_file:
-    if upload_file is not None:
-        df = pd.read_csv(upload_file)
-        df = df.drop(columns=['Unnamed: 0'])
-        df = df.rename(columns={df.columns[0]: 'text'}, inplace=True)
-        reviews = list(df['text'])
-        predict_output = pd.DataFrame(predict_sentiment_batch(reviews))
-        result_df = df.assign(label=predict_output)
-        st.subheader('Result')
-        st.markdown('Output (first five rows)')
-        st.write(result_df.head())
+if upload_file is not None:
+    df = pd.read_csv(upload_file)
+    df = df.drop(columns=['Unnamed: 0'])
+    df = df.rename(columns={df.columns[0]: 'text'}, inplace=True)
+    st.write(df)
+    """predict_output = pd.DataFrame(predict_sentiment_batch(list(df['text'])))
+    result_df = df.assign(label=predict_output)
+    st.subheader('Result')
+    st.markdown('Output (first five rows)')
+    st.write(result_df.head())
+"""
+    download = st.button('Download')
+    if download:
+        # export resulting dataframe as csv file
+        #result_df.to_csv('result.csv', index=False)
 
-        # Plot distribution of sentiment
-        # funnel chart
-    else:
-        st.warning('Please upload the file in the required format')
+    # Plot distribution of sentiment
+    # funnel chart
+else:
+    st.warning('Please upload the file in the required format')
+
+else:
+    st.warning('Please upload the file in the required format')
