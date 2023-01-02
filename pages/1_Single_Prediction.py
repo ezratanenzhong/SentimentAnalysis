@@ -376,7 +376,7 @@ def predict_sentiment_proba(input_text):
 
 
 submitted = st.button('Analyse')
-if (submitted AND input_text != "" ):
+if (submitted and input_text != "" ):
     result = predict_sentiment(input_text)
     st.write("### Predicted sentiment label: ")
     if result == "['positive']":
