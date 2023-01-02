@@ -374,8 +374,7 @@ if upload_file is not None:
     st.subheader('Result')
     st.markdown('Output (first five rows)')
     st.write(result_df.head())
-"""
-    #st.download_button('Download', result_df)
+    st.download_button('Download', result_df)
 
     # Plot distribution of sentiment
     # funnel chart
