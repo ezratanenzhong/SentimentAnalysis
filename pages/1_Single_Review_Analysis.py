@@ -16,9 +16,10 @@ nltk.download('stopwords')
 
 with st.sidebar:
     st.write('This page can analyze the sentiment of a single review.')
-    st.write(' - Enter the review in the text area and click the Analyse button')
-    st.write(' - The output will show the predicted sentiment label of the review.')
-    st.write(' - View the class probabilities for the input data points (i.e. the probability that a particular data point falls into the underlying classes).')
+    st.write(' 1. Enter the review in the text area')
+    st.write(' 2. Click the Analyze button')
+    st.write(' 3. The output will show the predicted sentiment label of the review.')
+    st.write(' 4. View the class probabilities for the input data points (i.e. the probability that a particular data point falls into the underlying classes).')
 
 st.header("Single Review Prediction")
 input_text = st.text_input('Enter the review for which you want to know the sentiment:')
@@ -391,6 +392,6 @@ if (submitted and input_text != "" ):
     proba_df = proba_df.assign(label=probability)
     proba_df = proba_df.rename(columns={proba_df.columns[1]: 'probability (%)'})
     st.subheader('Class probabilities')
-    st.write(proba_df)
+    st.write(proba_df.sort_values(by='probability (%)', ascending=False))
 else:
     st.warning("Please enter a review")
