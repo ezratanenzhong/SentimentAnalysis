@@ -369,7 +369,7 @@ if upload_file is not None:
     df = df.rename(columns={df.columns[0]: 'text'}, inplace=True)
     st.write(df)
     
-    predict_output = pd.DataFrame(predict_sentiment_batch(df['text']))
+    predict_output = pd.DataFrame(predict_sentiment_batch(df))
     result_df = df.assign(label=predict_output)
     st.subheader('Result')
     st.markdown('Output (first five rows)')
