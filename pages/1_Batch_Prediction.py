@@ -16,7 +16,7 @@ st.header("Batch Review Prediction")
 st.markdown('Predict the sentiment of multiple reviews, whether is positive, negative or neutral.')
 st.write('Upload a CSV file which contain one column only - the reviews column. See example below:')
 example = pd.read_csv('example_data.csv')
-st.write(example.head())
+st.write(example)
 upload_file = st.file_uploader("Upload file", type=["csv"])
 
 model_path = 'finalized_model.pkl'
