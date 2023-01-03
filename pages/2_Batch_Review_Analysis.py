@@ -4,7 +4,6 @@ import string
 import re
 import numpy as np
 import pickle
-import plotly.express as px
 from plotly import graph_objs as go
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
@@ -371,9 +370,7 @@ def predict_sentiment_batch(review):
     output = pd.DataFrame(data=label_list, columns=['label'])
     return output
 
-analyze = st.button('Analyze')
-if analyze:
-    if upload_file is not None:
+if upload_file is not None:
         df = pd.read_csv(upload_file)
         #df = df.drop(columns=['Unnamed: 0'])
         input_list = df['text'].tolist()
@@ -399,5 +396,5 @@ if analyze:
                     title={"position": "top center", "text": "Funnel-Chart of Sentiment Distribution"}
                     ))
             st.plotly_chart(fig, theme="streamlit")
-    else:
+else:
         st.warning('Please upload the file in the required format')
