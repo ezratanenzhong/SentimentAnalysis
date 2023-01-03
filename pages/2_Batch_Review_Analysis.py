@@ -19,8 +19,9 @@ with st.sidebar:
     st.write(' - A table with the review text and their sentiment labels will be displayed.')
     st.write(' - View the distribution plot of the sentiment labels of the data')
 
+st.image("Image 2")
 st.header("Batch Review Prediction")
-st.write('Upload a CSV file which contains *one column* only - the text column. See example below:')
+st.write('Upload a CSV file which contains **one column** only - the text column. See example below:')
 example = pd.read_csv("example.csv")
 st.write(example.head())
 upload_file = st.file_uploader("Upload file", type=["csv"])
@@ -369,32 +370,33 @@ def predict_sentiment_batch(review):
     output = pd.DataFrame(data=label_list, columns=['label'])
     return output
 
-if upload_file is not None:
-    df = pd.read_csv(upload_file)
-    #df = df.drop(columns=['Unnamed: 0'])
-    input_list = df['text'].tolist()
-    predict_output = pd.DataFrame(predict_sentiment_batch(input_list))
-    result_df = df.assign(label=predict_output)
-    st.subheader('Result')
-    st.info('Table with text and its sentiment label')
-    st.write(result_df)
-    @st.cache
-    def convert_df(result_df):
-        # Cache the conversion to prevent computation on every rerun
-        return result_df.to_csv().encode('utf-8')
-    csv = convert_df(result_df)
-    st.download_button(label="Download data as CSV", data=csv, file_name='output.csv',mime='text/csv')
-    
-    plot = st.button('Plot sentiment distribution')
-    if plot:
-        # Plot distribution of sentiment using Funnel-Chart
-        count = result_df.groupby('label').count()['text'].reset_index().sort_values(by='text', ascending=False)
-        fig = go.Figure(go.Funnelarea(
-            text=count.label,
-            values=count.text,
-            title={"position": "top center", "text": "Funnel-Chart of Sentiment Distribution"}
-        ))
-        st.plotly_chart(fig, theme="streamlit")
-    
-else:
-    st.warning('Please upload the file in the required format')
+analyze = st.button('Analyze')
+if analyze:
+    if upload_file is not None:
+        df = pd.read_csv(upload_file)
+        #df = df.drop(columns=['Unnamed: 0'])
+        input_list = df['text'].tolist()
+        predict_output = pd.DataFrame(predict_sentiment_batch(input_list))
+        result_df = df.assign(label=predict_output)
+        st.subheader('Result')
+        st.info('Table with text and its sentiment label')
+        st.write(result_df)
+        @st.cache
+        def convert_df(result_df):
+            # Cache the conversion to prevent computation on every rerun
+            return result_df.to_csv().encode('utf-8')
+        csv = convert_df(result_df)
+        st.download_button(label="Download data as CSV", data=csv, file_name='output.csv',mime='text/csv')
+
+        plot = st.button('Plot sentiment distribution')
+        if plot:
+            # Plot distribution of sentiment using Funnel-Chart
+            count = result_df.groupby('label').count()['text'].reset_index().sort_values(by='text', ascending=False)
+            fig = go.Figure(go.Funnelarea(
+                text=count.label,
+                values=count.text,
+                title={"position": "top center", "text": "Funnel-Chart of Sentiment Distribution"}
+            ))
+            st.plotly_chart(fig, theme="streamlit")
+    else:
+        st.warning('Please upload the file in the required format')
