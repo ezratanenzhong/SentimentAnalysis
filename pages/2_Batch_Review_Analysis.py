@@ -19,7 +19,7 @@ with st.sidebar:
     st.write(' - A table with the review text and their sentiment labels will be displayed.')
     st.write(' - View the distribution plot of the sentiment labels of the data')
 
-st.image("Image 2")
+st.image("Image 2.png")
 st.header("Batch Review Prediction")
 st.write('Upload a CSV file which contains **one column** only - the text column. See example below:')
 example = pd.read_csv("example.csv")
@@ -390,13 +390,19 @@ if analyze:
 
         plot = st.button('Plot sentiment distribution')
         if plot:
-            # Plot distribution of sentiment using Funnel-Chart
+            plot_select = st.radio(
+                "Choose chart type",
+                ('Bar chart', 'Funnel chart'))
             count = result_df.groupby('label').count()['text'].reset_index().sort_values(by='text', ascending=False)
-            fig = go.Figure(go.Funnelarea(
-                text=count.label,
-                values=count.text,
-                title={"position": "top center", "text": "Funnel-Chart of Sentiment Distribution"}
-            ))
-            st.plotly_chart(fig, theme="streamlit")
+            if plot_select == 'Bar chart'
+            # Plot distribution of sentiment using Funnel-Chart
+                fig = go.Figure(go.Funnelarea(
+                    text=count.label,
+                    values=count.text,
+                    title={"position": "top center", "text": "Funnel-Chart of Sentiment Distribution"}
+                ))
+                st.plotly_chart(fig, theme="streamlit")
+            else: 
+                st.bar_chart(count)
     else:
         st.warning('Please upload the file in the required format')
