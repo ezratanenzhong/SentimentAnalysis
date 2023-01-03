@@ -4,6 +4,7 @@ import string
 import re
 import numpy as np
 import pickle
+import plotly.express as px
 from plotly import graph_objs as go
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
@@ -390,11 +391,9 @@ if analyze:
 
         plot = st.button('Plot sentiment distribution')
         if plot:
-            plot_select = st.radio(
-                "Choose chart type",
-                ('Bar chart', 'Funnel chart'))
+            plot_select = st.radio("Choose chart type", ('Funnel chart', 'Bar chart'))
             count = result_df.groupby('label').count()['text'].reset_index().sort_values(by='text', ascending=False)
-            if plot_select == 'Bar chart'
+            if plot_select == 'Funnel chart':
             # Plot distribution of sentiment using Funnel-Chart
                 fig = go.Figure(go.Funnelarea(
                     text=count.label,
@@ -403,6 +402,7 @@ if analyze:
                 ))
                 st.plotly_chart(fig, theme="streamlit")
             else: 
-                st.bar_chart(count)
+                fig = px.bar(count, x="count", y="label", text_auto=True)
+                st.bar_chart(fig)
     else:
         st.warning('Please upload the file in the required format')
