@@ -391,8 +391,7 @@ if analyze:
 
         plot = st.button('Plot sentiment distribution')
         if plot:
-            
-                fig = px.bar(count, x="count", y="label", text_auto=True)
-                st.bar_chart(fig)
+
+                st.bar_chart(count)
     else:
         st.warning('Please upload the file in the required format')
