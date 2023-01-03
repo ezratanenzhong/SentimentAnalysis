@@ -391,17 +391,7 @@ if analyze:
 
         plot = st.button('Plot sentiment distribution')
         if plot:
-            plot_select = st.radio("Choose chart type", ('Funnel chart', 'Bar chart'))
-            count = result_df.groupby('label').count()['text'].reset_index().sort_values(by='text', ascending=False)
-            if plot_select == 'Funnel chart':
-            # Plot distribution of sentiment using Funnel-Chart
-                fig = go.Figure(go.Funnelarea(
-                    text=count.label,
-                    values=count.text,
-                    title={"position": "top center", "text": "Funnel-Chart of Sentiment Distribution"}
-                ))
-                st.plotly_chart(fig, theme="streamlit")
-            else: 
+            
                 fig = px.bar(count, x="count", y="label", text_auto=True)
                 st.bar_chart(fig)
     else:
