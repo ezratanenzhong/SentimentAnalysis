@@ -14,5 +14,4 @@ with st.sidebar:
     st.subheader('About')
     st.markdown('This is a web application to identify the sentiment label of reviews provided by customers.')
     st.markdown("Code: https://github.com/ezratanenzhong/SentimentAnalysis")
-    st.image("Image 3.jpg")
 
