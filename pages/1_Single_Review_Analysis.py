@@ -369,7 +369,7 @@ if submitted:
   if input_text != "":
     result = predict_sentiment(input_text)
     st.write("### Predicted sentiment label: ")
-    if result == "['positive']"
+    if result == "['positive']":
         st.success(result)
     elif result == "['negative']":
         st.error(result)
