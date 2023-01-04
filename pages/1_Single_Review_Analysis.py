@@ -16,13 +16,14 @@ nltk.download('stopwords')
 
 with st.sidebar:
     st.write('This page can analyze the sentiment of a single review.')
+    st.image("Image 2.png")
     st.write(' 1. Enter the review in the text area')
     st.write(' 2. Click the Analyze button')
     st.write(' 3. The output will show the predicted sentiment label of the review.')
     st.write(' 4. View the class probabilities for the input data points (i.e. the probability that a particular data point falls into the underlying classes).')
 
-st.image("Image 2.png")
 st.header("Single Review Prediction")
+st.markdown{'The input review for sentiment analysis can only be in **English**.')
 input_text = st.text_input('Enter the review for which you want to know the sentiment:')
 
 model_path = 'finalized_model.pkl'
@@ -260,41 +261,34 @@ abbreviations = {
     "zzz": "sleeping bored and tired"
 }
 
-
 # Remove all english stopwords
 def remove_stopwords(text):
     text = ' '.join([word for word in text.split() if word not in stopwords.words("english")])
     return text
-
 
 # Remove all punctuations
 def remove_all_punct(text):
     table = str.maketrans('', '', string.punctuation)
     return text.translate(table)
 
-
 # Remove all URLs, replace by URL
 def remove_URL(text):
     url = re.compile(r'https?://\S+|www\.\S+')
     return url.sub(r'URL', str(text))
-
 
 # Remove HTML beacon
 def remove_HTML(text):
     html = re.compile(r'<.*?>')
     return html.sub(r'', text)
 
-
 # Remove non printable characters
 def remove_not_ASCII(text):
     text = ''.join([word for word in text if word in string.printable])
     return text
 
-
 # Change an abbreviation by its true meaning
 def word_abbrev(word):
     return abbreviations[word.lower()] if word.lower() in abbreviations.keys() else word
-
 
 # Replace all abbreviations
 def replace_abbrev(text):
@@ -303,18 +297,15 @@ def replace_abbrev(text):
         string += word_abbrev(word) + " "
     return string
 
-
 # Remove @ and mention, replace by USER
 def remove_mention(text):
     at = re.compile(r'@\S+')
     return at.sub(r'USER', text)
 
-
 # Remove numbers, replace it by NUMBER
 def remove_number(text):
     num = re.compile(r'[-+]?[.\d]*[\d]+[:,.\d]*')
     return num.sub(r'NUMBER', text)
-
 
 # Remove emoji
 def remove_emoji(string):
@@ -328,13 +319,11 @@ def remove_emoji(string):
                                "]+", flags=re.UNICODE)
     return emoji_pattern.sub(r'', string)
 
-
 # lemmatize text (convert to root form of text)
 def lemmatization(text):
     lm = WordNetLemmatizer()
     text = ' '.join([lm.lemmatize(word, pos='v') for word in text.split()])
     return text
-
 
 def clean_text(text):
     # lowercase text and remove punctuation
@@ -366,7 +355,6 @@ def predict_sentiment(input_text):
     prediction = np.array2string(prediction)
     return prediction
 
-
 # prediction probability
 def predict_sentiment_proba(input_text):
     cleaned_review = clean_text(input_text)
@@ -376,16 +364,15 @@ def predict_sentiment_proba(input_text):
     prediction_proba = prediction_proba.transpose()
     return prediction_proba
 
-
-submitted = st.button('Analyse')
+submitted = st.button('Analyze text')
 if submitted:
-    if input_text != "":
-        result = predict_sentiment(input_text)
-        st.write("### Predicted sentiment label: ")
-        if result == "['positive']":
-            st.success(result)
-        elif result == "['negative']":
-            st.error(result)
+  if input_text != "":
+    result = predict_sentiment(input_text)
+    st.write("### Predicted sentiment label: ")
+    if result == "['positive']"
+        st.success(result)
+    elif result == "['negative']":
+        st.error(result)
         else:
             st.warning(result)
         probability = predict_sentiment_proba(input_text)
