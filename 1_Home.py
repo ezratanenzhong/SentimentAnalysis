@@ -3,15 +3,19 @@ import streamlit as st
 st.set_page_config(page_title='Reviewalyze', initial_sidebar_state="expanded", menu_items=None)
 
 st.title("Reviewalyze")
+col1, col2 = st.columns(2)
+
+with col1:
 st.markdown("""
-    Welcome to Reviewalyze ! The web application is designed to **analyze reviews** and help businesses and individuals **realize** the sentiment of their customer reviews.
-    This can be a valuable tool for understanding customer sentiment and improving customer satisfaction.
-    Whether you're a business owner looking to gauge the success of your products or services, or an individual looking to understand the sentiment of a particular brand or product, our Sentiment Analyzer has you covered. 
-    /n **👈 Select a page from the sidebar** to try it out and get a better understanding of your customer reviews!
-    - Choose 'Single Review Analysis' if want to predict the sentiment of a review
-    - Choose 'Batch Review Analysis' if want to predict the sentiment of reviews in batch   
+    Welcome to Reviewalyze ! The web application is designed to **analyze reviews** and help businesses and individuals **realize** the sentiment of reviews on them.
+    The Sentiment Analyzer can be useful for businesses looking to improve customer satisfaction or for individuals looking to understand the sentiment of a brand or product."  
 """)
-st.image("Image 1.jpg")
+st.write("**👈 Select a page from the sidebar** to try it out and get a better understanding of your customer reviews!
+    - Choose 'Single Review Analysis' if want to predict the sentiment of a review
+    - Choose 'Batch Review Analysis' if want to predict the sentiment of reviews in batch ")
+
+with col2:
+    st.image("Image 1.jpg")
 
 with st.sidebar:
     st.sidebar.success('Select a page above')
