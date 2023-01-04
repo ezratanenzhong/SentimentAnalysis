@@ -373,14 +373,14 @@ if submitted:
         st.success(result)
     elif result == "['negative']":
         st.error(result)
-        else:
-            st.warning(result)
-        probability = predict_sentiment_proba(input_text)
-        sentiment = ['negative', 'neutral', 'positive']
-        proba_df = pd.DataFrame(sentiment, columns=['sentiment'])
-        proba_df = proba_df.assign(label=probability)
-        proba_df = proba_df.rename(columns={proba_df.columns[1]: 'probability (%)'})
-        st.subheader('Class probabilities')
-        st.write(proba_df.sort_values(by='probability (%)', ascending=False))
+    else:
+        st.warning(result)
+    probability = predict_sentiment_proba(input_text)
+    sentiment = ['negative', 'neutral', 'positive']
+    proba_df = pd.DataFrame(sentiment, columns=['sentiment'])
+    proba_df = proba_df.assign(label=probability)
+    proba_df = proba_df.rename(columns={proba_df.columns[1]: 'probability (%)'})
+    st.subheader('Class probabilities')
+    st.write(proba_df.sort_values(by='probability (%)', ascending=False))
 else:
     st.warning("Please enter a review")
