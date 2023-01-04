@@ -23,7 +23,7 @@ with st.sidebar:
     st.write(' 4. View the class probabilities for the input data points (i.e. the probability that a particular data point falls into the underlying classes).')
 
 st.header("Single Review Prediction")
-st.markdown{'The input review for sentiment analysis can only be in **English**.')
+st.markdown('The input review for sentiment analysis can only be in **English**.')
 input_text = st.text_input('Enter the review for which you want to know the sentiment:')
 
 model_path = 'finalized_model.pkl'
