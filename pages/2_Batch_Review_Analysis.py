@@ -267,41 +267,34 @@ abbreviations = {
     "zzz": "sleeping bored and tired"
 }
 
-
 # Remove all english stopwords
 def remove_stopwords(text):
     text = ' '.join([word for word in text.split() if word not in stopwords.words("english")])
     return text
-
 
 # Remove all punctuations
 def remove_all_punct(text):
     table = str.maketrans('', '', string.punctuation)
     return text.translate(table)
 
-
 # Remove all URLs, replace by URL
 def remove_URL(text):
     url = re.compile(r'https?://\S+|www\.\S+')
     return url.sub(r'URL', str(text))
-
 
 # Remove HTML beacon
 def remove_HTML(text):
     html = re.compile(r'<.*?>')
     return html.sub(r'', text)
 
-
 # Remove non printable characters
 def remove_not_ASCII(text):
     text = ''.join([word for word in text if word in string.printable])
     return text
 
-
 # Change an abbreviation by its true meaning
 def word_abbrev(word):
     return abbreviations[word.lower()] if word.lower() in abbreviations.keys() else word
-
 
 # Replace all abbreviations
 def replace_abbrev(text):
@@ -310,18 +303,15 @@ def replace_abbrev(text):
         string += word_abbrev(word) + " "
     return string
 
-
 # Remove @ and mention, replace by USER
 def remove_mention(text):
     at = re.compile(r'@\S+')
     return at.sub(r'USER', text)
 
-
 # Remove numbers, replace it by NUMBER
 def remove_number(text):
     num = re.compile(r'[-+]?[.\d]*[\d]+[:,.\d]*')
     return num.sub(r'NUMBER', text)
-
 
 # Remove emoji
 def remove_emoji(string):
@@ -335,13 +325,11 @@ def remove_emoji(string):
                                "]+", flags=re.UNICODE)
     return emoji_pattern.sub(r'', string)
 
-
 # lemmatize text (convert to root form of text)
 def lemmatization(text):
     lm = WordNetLemmatizer()
     text = ' '.join([lm.lemmatize(word, pos='v') for word in text.split()])
     return text
-
 
 def clean_text(text):
     # lowercase text and remove punctuation
@@ -362,9 +350,7 @@ def clean_text(text):
     # Remove stopwords and lemmatize text
     text = remove_stopwords(text)
     text = lemmatization(text)
-
     return text
-
 
 # generate word cloud
 def wordcloud_draw(data, color='black'):
@@ -373,8 +359,7 @@ def wordcloud_draw(data, color='black'):
                              if 'http' not in word
                              and not word.startswith('@')
                              and not word.startswith('#')
-                             and word != 'RT'
-                             ])
+                             and word != 'RT'])
     wordcloud = WordCloud(stopwords=STOPWORDS,
                           background_color=color,
                           width=2000,
@@ -399,7 +384,6 @@ def predict_sentiment_batch(review):
     output = pd.DataFrame(data=label_list, columns=['label'])
     return output
 
-
 if upload_file is not None:
     df = pd.read_csv(upload_file)
     # df = df.drop(columns=['Unnamed: 0'])
@@ -407,7 +391,7 @@ if upload_file is not None:
     predict_output = pd.DataFrame(predict_sentiment_batch(input_list))
     result_df = df.assign(label=predict_output)
     st.subheader('Result')
-    st.info('Table with text and its sentiment label')
+    st.info('Table showing first five rows of text and its sentiment label')
     st.write(result_df)
 
     @st.cache
@@ -438,6 +422,7 @@ if upload_file is not None:
         count = result_df.groupby('label').count()['text'].reset_index().sort_values(by='text', ascending=False)
         fig = go.Figure(go.Bar(x=count.label, y=count.text, text=count.text))
         fig.show()
+        st.subheader("Bar Chart of Sentiment Distribution")
         st.plotly_chart(fig, theme="streamlit")
 
     if viz_option == 'Both (Bar Chart & Word Cloud)':
@@ -457,6 +442,7 @@ if upload_file is not None:
             count = result_df.groupby('label').count()['text'].reset_index().sort_values(by='text', ascending=False)
             fig = go.Figure(go.Bar(x=count.label, y=count.text, text=count.text))
             fig.show()
+            st.subheader("Bar Chart of Sentiment Distribution")
             st.plotly_chart(fig, use_container_width=True)
 
 else:
