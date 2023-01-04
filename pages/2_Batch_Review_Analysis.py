@@ -21,10 +21,10 @@ with st.sidebar:
     st.image('Image 2.png')
     st.write(' - Upload a file in the required format and let the analyzer do the work!')
     st.write(' - A table with the review text and their sentiment labels will be displayed.')
-    st.write(' - Click Plot Sentiment Label button to view the distribution of the sentiment labels.')
-    st.write(' - Click Plot Wordcloud button to view the words contain in positive and negative sentiment sentence.')
-
-
+    st.write(' - Choose the type of visualization')
+    st.write(' - Click Bar Chart button to view the distribution of the sentiment labels.')
+    st.write(' - Click Wordcloud button to view the words contain in positive and negative sentiment sentence.')
+    st.write(' - Click Both button to view both plots side by side.')
 
 st.header("Batch Review Prediction")
 st.write('Upload a CSV file which contains **one column** only - the text column. See example below:')
@@ -418,7 +418,7 @@ if upload_file is not None:
     csv = convert_df(result_df)
     st.download_button(label="Download data as CSV", data=csv, file_name='output.csv', mime='text/csv')
     # categorise the text based on positive and negative
-
+    st.subheader('Visualization')
     viz_option = st.radio('Choose plot', ('Bar Chart', 'Word Cloud', 'Both (Bar Chart & Word Cloud)'), horizontal=True)
 
     #wordcloud_button = st.button('Display Word Cloud')
@@ -457,7 +457,7 @@ if upload_file is not None:
             count = result_df.groupby('label').count()['text'].reset_index().sort_values(by='text', ascending=False)
             fig = go.Figure(go.Bar(x=count.label, y=count.text, text=count.text))
             fig.show()
-            st.plotly_chart(fig, theme="streamlit")
+            st.plotly_chart(fig, use_container_width=True)
 
 else:
     st.warning('Please upload the file in the required format')
