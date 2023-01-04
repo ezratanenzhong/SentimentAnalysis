@@ -3,11 +3,14 @@ import pandas as pd
 import string
 import re
 import numpy as np
+import matplotlib.pyplot as plt
 import pickle
 from plotly import graph_objs as go
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
+from wordcloud import WordCloud, STOPWORDS
 import nltk
+
 nltk.download('wordnet')
 nltk.download('omw-1.4')
 nltk.download('punkt')
@@ -359,6 +362,29 @@ def clean_text(text):
 
     return text
 
+
+# generate word cloud
+def wordcloud_draw(data, color='black'):
+    words = ' '.join(data)
+    cleaned_word = " ".join([word for word in words.split()
+                             if 'http' not in word
+                             and not word.startswith('@')
+                             and not word.startswith('#')
+                             and word != 'RT'
+                             ])
+    wordcloud = WordCloud(stopwords=STOPWORDS,
+                          background_color=color,
+                          width=2000,
+                          height=1500,
+                          min_font_size=20,
+                          max_font_size=200
+                          ).generate(cleaned_word)
+    plt.figure(1, figsize=(10, 10))
+    plt.imshow(wordcloud)
+    plt.axis("off")
+    plt.show()
+    st.pyplot()
+
 # prediction
 def predict_sentiment_batch(review):
     label_list = []
@@ -370,31 +396,49 @@ def predict_sentiment_batch(review):
     output = pd.DataFrame(data=label_list, columns=['label'])
     return output
 
-if upload_file is not None:
-        df = pd.read_csv(upload_file)
-        #df = df.drop(columns=['Unnamed: 0'])
-        input_list = df['text'].tolist()
-        predict_output = pd.DataFrame(predict_sentiment_batch(input_list))
-        result_df = df.assign(label=predict_output)
-        st.subheader('Result')
-        st.info('Table with text and its sentiment label')
-        st.write(result_df)
-        @st.cache
-        def convert_df(result_df):
-            # Cache the conversion to prevent computation on every rerun
-            return result_df.to_csv().encode('utf-8')
-        csv = convert_df(result_df)
-        st.download_button(label="Download data as CSV", data=csv, file_name='output.csv',mime='text/csv')
 
-        plot = st.button('Plot sentiment distribution')
-        if plot:
-            count = result_df.groupby('label').count()['text'].reset_index().sort_values(by='text', ascending=False)
-            # Plot distribution of sentiment using Funnel-Chart
-            fig = go.Figure(go.Funnelarea(
-                    text=count.label,
-                    values=count.text,
-                    title={"position": "top center", "text": "Funnel-Chart of Sentiment Distribution"}
-                    ))
-            st.plotly_chart(fig, theme="streamlit")
+if upload_file is not None:
+    df = pd.read_csv(upload_file)
+    # df = df.drop(columns=['Unnamed: 0'])
+    input_list = df['text'].tolist()
+    predict_output = pd.DataFrame(predict_sentiment_batch(input_list))
+    result_df = df.assign(label=predict_output)
+    st.subheader('Result')
+    st.info('Table with text and its sentiment label')
+    st.write(result_df)
+
+    @st.cache
+    def convert_df(data):
+        # Cache the conversion to prevent computation on every rerun
+        return data.to_csv().encode('utf-8')
+
+    csv = convert_df(result_df)
+    st.download_button(label="Download data as CSV", data=csv, file_name='output.csv', mime='text/csv')
+    # categorise the text based on positive and negative
+
+    wordcloud_button = st.button('Display Word Cloud')
+    if wordcloud_button:
+        review_pos = result_df[result_df['label'] == 'positive']
+        review_pos = result_df['text']
+        review_neg = result_df[result_df['label'] == 'negative']
+        review_neg = review_neg['text']
+
+        st.subheader("Positive words")
+        wordcloud_draw(review_pos, 'white')
+        st.subheader("Negative words")
+        wordcloud_draw(review_neg)
+
+
+    plot = st.button('Plot sentiment distribution')
+    if plot:
+        count = result_df.groupby('label').count()['text'].reset_index().sort_values(by='text', ascending=False)
+        # Plot distribution of sentiment using Funnel-Chart
+        fig = go.Figure(go.Funnelarea(
+            text=count.label,
+            values=count.text,
+            title={"position": "top center", "text": "Funnel-Chart of Sentiment Distribution"}
+        ))
+        st.plotly_chart(fig, theme="streamlit")
 else:
-        st.warning('Please upload the file in the required format')
+    st.warning('Please upload the file in the required format')
+
