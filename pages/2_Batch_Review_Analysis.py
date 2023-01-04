@@ -18,11 +18,12 @@ nltk.download('stopwords')
 
 with st.sidebar:
     st.write('This page can analyze the sentiment of multiple reviews.')
+    st.image('Image 2.png')
     st.write(' - Upload a file in the required format and let the analyzer do the work!')
     st.write(' - A table with the review text and their sentiment labels will be displayed.')
     st.write(' - Click Plot Sentiment Label button to view the distribution of the sentiment labels.')
     st.write(' - Click Plot Wordcloud button to view the words contain in positive and negative sentiment sentence.')
-    st.image("Image 2.png")
+
 
 
 st.header("Batch Review Prediction")
@@ -382,7 +383,7 @@ def wordcloud_draw(data, color='black'):
                           max_font_size=200
                           ).generate(cleaned_word)
     # Display the generated image:
-    fig, ax = plt.subplots(figsize=(10, 8))
+    fig, ax = plt.subplots(figsize=(7, 6))
     ax.imshow(wordcloud)
     plt.axis("off")
     st.pyplot(fig)
@@ -418,7 +419,7 @@ if upload_file is not None:
     st.download_button(label="Download data as CSV", data=csv, file_name='output.csv', mime='text/csv')
     # categorise the text based on positive and negative
 
-    viz_option = st.radio('Choose plot', ('Bar Chart', 'Word Cloud', 'Both (Bar Chart & Word Cloud)'))
+    viz_option = st.radio('Choose plot', ('Bar Chart', 'Word Cloud', 'Both (Bar Chart & Word Cloud)'), horizontal=True)
 
     #wordcloud_button = st.button('Display Word Cloud')
     if viz_option == 'Word Cloud':
@@ -432,18 +433,31 @@ if upload_file is not None:
         st.subheader("Words contain in negative reviews")
         wordcloud_draw(review_neg)
 
-
     #plot = st.button('Plot sentiment distribution')
     if viz_option == 'Bar Chart':
         count = result_df.groupby('label').count()['text'].reset_index().sort_values(by='text', ascending=False)
-        # Plot distribution of sentiment using Funnel-Chart
-        # fig = go.Figure(go.Funnelarea(
-        #     text=count.label,
-        #     values=count.text,
-        #     title={"position": "top center", "text": "Funnel-Chart of Sentiment Distribution"}
-        # ))
-        fig = go.Figure(go.Bar(x=count.sentiment, y=count.text, text=count.text))
+        fig = go.Figure(go.Bar(x=count.label, y=count.text, text=count.text))
         fig.show()
         st.plotly_chart(fig, theme="streamlit")
+
+    if viz_option == 'Both (Bar Chart & Word Cloud)':
+        col1, col2 = st.columns(2)
+        with col1:
+            review_pos = result_df[result_df['label'] == 'positive']
+            review_pos = result_df['text']
+            review_neg = result_df[result_df['label'] == 'negative']
+            review_neg = review_neg['text']
+
+            st.subheader("Words contain in positive reviews")
+            wordcloud_draw(review_pos, 'white')
+            st.subheader("Words contain in negative reviews")
+            wordcloud_draw(review_neg)
+
+        with col2:
+            count = result_df.groupby('label').count()['text'].reset_index().sort_values(by='text', ascending=False)
+            fig = go.Figure(go.Bar(x=count.label, y=count.text, text=count.text))
+            fig.show()
+            st.plotly_chart(fig, theme="streamlit")
+
 else:
     st.warning('Please upload the file in the required format')
