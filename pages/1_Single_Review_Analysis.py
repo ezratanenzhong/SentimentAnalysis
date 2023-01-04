@@ -382,5 +382,5 @@ if submitted:
     proba_df = proba_df.rename(columns={proba_df.columns[1]: 'probability (%)'})
     st.subheader('Class probabilities')
     st.write(proba_df.sort_values(by='probability (%)', ascending=False))
-else:
+  else:
     st.warning("Please enter a review")
