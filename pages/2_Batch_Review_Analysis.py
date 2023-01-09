@@ -374,6 +374,8 @@ def predict_sentiment_batch(review):
     output = pd.DataFrame(data=label_list, columns=['label'])
     return output
 
+
+st.set_page_config(layout='wide')
 with st.sidebar:
     st.write('This page can analyze the sentiment of multiple reviews.')
     st.image('Image 2.png')
@@ -402,7 +404,7 @@ if submitted:
         input_list = df['text'].tolist()
         predict_output = pd.DataFrame(predict_sentiment_batch(input_list))
         result_df = df.assign(label=predict_output)
-        #result_df = result_df.drop(columns=['Unnamed: 0'])
+        result_df = result_df.drop(columns=['Unnamed: 0'])
         st.subheader('Result')
         st.write(result_df)
         @st.cache
@@ -413,7 +415,6 @@ if submitted:
         st.download_button(label="Download Output Data", data=csv, file_name='output.csv', mime='text/csv')
 
         st.subheader('Visualization')
-        sentiment_choice = st.selectbox('Select sentiment', ('Positive', 'Negative', 'Neutral'))
         viz_option = st.radio('Choose plot', ('Bar Chart', 'Word Cloud', 'N-grams'), horizontal=True)
         if viz_option == 'Word Cloud':
             sentiment_choice = st.selectbox('Select sentiment', ('Positive', 'Negative', 'Neutral'))
@@ -422,28 +423,26 @@ if submitted:
                 review_pos = review_pos['text']
                 st.subheader("Words contain in positive reviews")
                 wordcloud_draw(review_pos, 'white')
-
             elif sentiment_choice == "Negative":
                 review_neg = result_df[result_df['label'] == 'negative']
                 review_neg = review_neg['text']
                 st.subheader("Words contain in negative reviews")
                 wordcloud_draw(review_neg)
-
-            elif sentiment_choice == "Neutral":
+            else:
                 review_neu = result_df[result_df['label'] == 'neutral']
                 review_neu = review_neu['text']
                 st.subheader("Words contain in neutral reviews")
                 wordcloud_draw(review_neu)
-
+                
         elif viz_option == 'Bar Chart':
             count = result_df.groupby('label').count()['text'].reset_index().sort_values(by='text', ascending=False)
             fig = go.Figure(go.Bar(x=count.label, y=count.text, text=count.text))
             fig.show()
             st.subheader("Bar Chart of Sentiment Distribution")
             st.plotly_chart(fig)
-
-        elif viz_option == 'N-grams':
-            ngram_option = st.selectbox("Select n-grams (Number of words)", ("Unigram", "Bigram", "Trigram"))
+        
+        else:
+            ngram_option = st.selectbox("Select n-grams (Number of word sequence)", ("Unigram", "Bigram", "Trigram"))
             review_pos = result_df[result_df['label'] == 'positive']
             review_neu = result_df[result_df['label'] == 'neutral']
             review_neg = result_df[result_df['label'] == 'negative']
