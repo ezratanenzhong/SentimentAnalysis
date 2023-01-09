@@ -424,7 +424,7 @@ if submitted:
             st.subheader("Bar Chart of Sentiment Distribution")
             st.plotly_chart(fig)
 
-        if viz_option == 'Word Cloud':
+        elif viz_option == 'Word Cloud':
             sentiment_choice = st.selectbox("Select sentiment", ["Positive", "Negative", "Neutral"])
             if sentiment_choice == "Positive":
                 review_pos = result_df[result_df['label'] == 'positive']
@@ -432,19 +432,19 @@ if submitted:
                 st.subheader("Words contain in positive reviews")
                 wordcloud_draw(review_pos, 'white')
 
-            if sentiment_choice == "Negative":
+            elif sentiment_choice == "Negative":
                 review_neg = result_df[result_df['label'] == 'negative']
                 review_neg = review_neg['text']
                 st.subheader("Words contain in negative reviews")
                 wordcloud_draw(review_neg)
 
-            if sentiment_choice == "Neutral":
+            elif sentiment_choice == "Neutral":
                 review_neu = result_df[result_df['label'] == 'neutral']
                 review_neu = review_neu['text']
                 st.subheader("Words contain in neutral reviews")
                 wordcloud_draw(review_neg)
 
-        if viz_option == 'N-grams':
+        elif viz_option == 'N-grams':
             sentiment_choice = st.selectbox("Select n-grams (Number of words)", ["Unigrams", "Bigrams", "Trigrams"])
             review_pos = result_df[result_df['label'] == 'positive']
             review_neu = result_df[result_df['label'] == 'neutral']
@@ -473,7 +473,7 @@ if submitted:
                 st.write("Top 10 words in negative reviews - UNIGRAM ANALYSIS")
                 st.pyplot(fig)
 
-            if sentiment_choice == "Bigrams":
+            elif sentiment_choice == "Bigrams":
                 # positive bigrams
                 bigrams_pos_df = pd.DataFrame(get_ngrams(review_pos['text'], ngram_from=2, ngram_to=2, n=15))
                 bigrams_pos_df.columns = ["Bigram", "Frequency"]
@@ -496,7 +496,7 @@ if submitted:
                 st.write("Top 10 words in negative reviews - BIGRAM ANALYSIS")
                 st.pyplot(fig)
 
-            if sentiment_choice == "Trigrams":
+            elif sentiment_choice == "Trigrams":
                 # positive trigrams
                 trigrams_pos_df = pd.DataFrame(get_ngrams(review_pos['text'], ngram_from=3, ngram_to=3, n=15))
                 trigrams_pos_df.columns = ["Trigram", "Frequency"]
