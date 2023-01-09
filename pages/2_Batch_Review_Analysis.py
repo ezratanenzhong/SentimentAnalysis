@@ -17,27 +17,6 @@ nltk.download('omw-1.4')
 nltk.download('punkt')
 nltk.download('stopwords')
 
-with st.sidebar:
-    st.write('This page can analyze the sentiment of multiple reviews.')
-    st.image('Image 2.png')
-    st.write('1. Upload a file in the required format and let the analyzer do the work!')
-    st.write('2. A table with the review text and their sentiment labels will be displayed.')
-    st.write('  - Click Download Output button if you want to download the output table.')
-    st.write('3. Choose the type of visualization')
-    st.write('  - Click Bar Chart button to view the distribution of the sentiment labels.')
-    st.write('  - Click Wordcloud button to view the words contain in positive and negative sentiment sentence.')
-
-st.header("Batch Review Prediction")
-st.write("Upload reviews as .csv file which contains the review's column with **column name = text** See example below:")
-example = pd.read_csv("example.csv")
-st.write(example.head())
-upload_file = st.file_uploader("Note: If the uploaded file is large, it may take up to few minutes.", type=["csv"])
-
-model_path = 'finalized_model.pkl'
-vectorizer_path = 'vectorizer.pkl'
-model = pickle.load(open(model_path, 'rb'))
-vectorizer = pickle.load(open(vectorizer_path, 'rb'))
-
 abbreviations = {
     "$": " dollar ",
     "€": " euro ",
@@ -395,6 +374,27 @@ def predict_sentiment_batch(review):
     output = pd.DataFrame(data=label_list, columns=['label'])
     return output
 
+with st.sidebar:
+    st.write('This page can analyze the sentiment of multiple reviews.')
+    st.image('Image 2.png')
+    st.write('1. Upload a file in the required format and let the analyzer do the work!')
+    st.write('2. A table with the review text and their sentiment labels will be displayed.')
+    st.write('  - Click Download Output button if you want to download the output table.')
+    st.write('3. Choose the type of visualization')
+    st.write('  - Click Bar Chart button to view the distribution of the sentiment labels.')
+    st.write('  - Click Wordcloud button to view the words contain in positive and negative sentiment sentence.')
+
+st.header("Batch Review Prediction")
+st.write("Upload reviews as .csv file which contains the review's column with **column name = text** See example below:")
+example = pd.read_csv("example.csv")
+st.write(example.head())
+upload_file = st.file_uploader("Note: If the uploaded file is large, it may take up to few minutes.", type=["csv"])
+
+model_path = 'finalized_model.pkl'
+vectorizer_path = 'vectorizer.pkl'
+model = pickle.load(open(model_path, 'rb'))
+vectorizer = pickle.load(open(vectorizer_path, 'rb'))
+
 submitted = st.button('Analyze')
 if submitted:
     if upload_file is not None:
@@ -405,33 +405,35 @@ if submitted:
         result_df = result_df.drop(columns=['Unnamed: 0'])
         st.subheader('Result')
         st.write(result_df)
-
         @st.cache
         def convert_df(data):
             # Cache the conversion to prevent computation on every rerun
             return data.to_csv().encode('utf-8')
-
         csv = convert_df(result_df)
         st.download_button(label="Download Output Data", data=csv, file_name='output.csv', mime='text/csv')
-        st.subheader('Visualization')
-        viz_option = st.radio('Choose plot', ('Word Cloud', 'Bar Chart', 'N-grams'), horizontal=True)
 
+        st.subheader('Visualization')
+        viz_option = st.radio('Choose plot', ('Bar Chart', 'Word Cloud', 'N-grams'), horizontal=True)
         if viz_option == 'Word Cloud':
+            sentiment_choice = st.selectbox('Select sentiment', ('Positive', 'Negative', 'Neutral'))
+            if sentiment_choice == "Positive":
                 review_pos = result_df[result_df['label'] == 'positive']
                 review_pos = review_pos['text']
                 st.subheader("Words contain in positive reviews")
                 wordcloud_draw(review_pos, 'white')
 
+            elif sentiment_choice == "Negative":
                 review_neg = result_df[result_df['label'] == 'negative']
                 review_neg = review_neg['text']
                 st.subheader("Words contain in negative reviews")
                 wordcloud_draw(review_neg)
 
+            elif sentiment_choice == "Neutral":
                 review_neu = result_df[result_df['label'] == 'neutral']
                 review_neu = review_neu['text']
                 st.subheader("Words contain in neutral reviews")
                 wordcloud_draw(review_neu)
-        
+                
         elif viz_option == 'Bar Chart':
             count = result_df.groupby('label').count()['text'].reset_index().sort_values(by='text', ascending=False)
             fig = go.Figure(go.Bar(x=count.label, y=count.text, text=count.text))
