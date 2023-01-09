@@ -413,33 +413,48 @@ if submitted:
         st.download_button(label="Download Output Data", data=csv, file_name='output.csv', mime='text/csv')
 
         st.subheader('Visualization')
-        viz_option = st.radio('Choose plot', ('Bar Chart', 'Word Cloud', 'N-grams'), horizontal=True)
-        if viz_option == 'Word Cloud':
-            sentiment_choice = st.selectbox('Select sentiment', ('Positive', 'Negative', 'Neutral'))
-            if sentiment_choice == "Positive":
-                review_pos = result_df[result_df['label'] == 'positive']
-                review_pos = review_pos['text']
-                st.subheader("Words contain in positive reviews")
-                wordcloud_draw(review_pos, 'white')
+        
+        review_pos = result_df[result_df['label'] == 'positive']
+        review_pos = review_pos['text']
+        st.subheader("Words contain in positive reviews")
+        wordcloud_draw(review_pos, 'white')
 
-            elif sentiment_choice == "Negative":
-                review_neg = result_df[result_df['label'] == 'negative']
-                review_neg = review_neg['text']
-                st.subheader("Words contain in negative reviews")
-                wordcloud_draw(review_neg)
+        entiment_choice == "Negative":
+        review_neg = result_df[result_df['label'] == 'negative']
+        review_neg = review_neg['text']
+        st.subheader("Words contain in negative reviews")
+        wordcloud_draw(review_neg)
 
-            elif sentiment_choice == "Neutral":
-                review_neu = result_df[result_df['label'] == 'neutral']
-                review_neu = review_neu['text']
-                st.subheader("Words contain in neutral reviews")
-                wordcloud_draw(review_neu)
-                
-        elif viz_option == 'Bar Chart':
-            count = result_df.groupby('label').count()['text'].reset_index().sort_values(by='text', ascending=False)
-            fig = go.Figure(go.Bar(x=count.label, y=count.text, text=count.text))
-            fig.show()
-            st.subheader("Bar Chart of Sentiment Distribution")
-            st.plotly_chart(fig)
+
+
+        count = result_df.groupby('label').count()['text'].reset_index().sort_values(by='text', ascending=False)
+        fig = go.Figure(go.Bar(x=count.label, y=count.text, text=count.text))
+        fig.show()
+        st.subheader("Bar Chart of Sentiment Distribution")
+        st.plotly_chart(fig)
+
+        # positive unigram
+        unigrams_pos_df = pd.DataFrame(get_ngrams(review_pos['text'], ngram_from=1, ngram_to=1, n=15))
+        unigrams_pos_df.columns = ["Unigram", "Frequency"]
+        unigrams_pos_df = unigrams_pos_df.head(10).sort_values(by='Frequency', ascending=True)
+        fig, ax = plt.subplots()
+        ax.barh("Unigram", "Frequency", color='green', height=0.4, data=unigrams_pos_df)
+        ax.xlabel("Count")
+        ax.ylabel("Words in positive reviews")
+        st.write("Top 10 words in positive reviews - UNIGRAM ANALYSIS")
+        st.pyplot(fig)
+
+        # negative unigram
+        unigrams_neg_df = pd.DataFrame(get_ngrams(review_neg['text'], ngram_from=1, ngram_to=1, n=15))
+        unigrams_neg_df.columns = ["Unigram", "Frequency"]
+        unigrams_neg_df = unigrams_neg_df.head(10).sort_values(by='Frequency', ascending=True)
+        fig, ax = plt.subplots()
+        plt.barh("Unigram", "Frequency", color='red', height=0.4, data=unigrams_neg_df)
+        ax.xlabel("Count")
+        ax.ylabel("Words in negative reviews")
+        st.write("Top 10 words in negative reviews - UNIGRAM ANALYSIS")
+        st.pyplot(fig)
+
 
     else:
         st.warning('Please upload the file in the required format')
