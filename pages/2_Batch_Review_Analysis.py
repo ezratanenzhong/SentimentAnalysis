@@ -402,7 +402,7 @@ if submitted:
         input_list = df['text'].tolist()
         predict_output = pd.DataFrame(predict_sentiment_batch(input_list))
         result_df = df.assign(label=predict_output)
-        result_df = result_df.drop(columns=['Unnamed: 0'])
+        #result_df = result_df.drop(columns=['Unnamed: 0'])
         st.subheader('Result')
         st.write(result_df)
         @st.cache
@@ -413,6 +413,7 @@ if submitted:
         st.download_button(label="Download Output Data", data=csv, file_name='output.csv', mime='text/csv')
 
         st.subheader('Visualization')
+        sentiment_choice = st.selectbox('Select sentiment', ('Positive', 'Negative', 'Neutral'))
         viz_option = st.radio('Choose plot', ('Bar Chart', 'Word Cloud', 'N-grams'), horizontal=True)
         if viz_option == 'Word Cloud':
             sentiment_choice = st.selectbox('Select sentiment', ('Positive', 'Negative', 'Neutral'))
