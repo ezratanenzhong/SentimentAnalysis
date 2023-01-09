@@ -425,8 +425,7 @@ if submitted:
             st.plotly_chart(fig)
 
         if viz_option == 'Word Cloud':
-            sentiment_choice = st.selectbox("Select sentiment", ["Positive", "Negative", "Neutral"],
-                                            label_visibility="hidden")
+            sentiment_choice = st.selectbox("Select sentiment", ["Positive", "Negative", "Neutral"])
             if sentiment_choice == "Positive":
                 review_pos = result_df[result_df['label'] == 'positive']
                 review_pos = review_pos['text']
@@ -446,8 +445,7 @@ if submitted:
                 wordcloud_draw(review_neg)
 
         if viz_option == 'N-grams':
-            sentiment_choice = st.selectbox("Select n-grams (Number of words)", ["Unigrams", "Bigrams", "Trigrams"],
-                                            label_visibility="hidden")
+            sentiment_choice = st.selectbox("Select n-grams (Number of words)", ["Unigrams", "Bigrams", "Trigrams"])
             review_pos = result_df[result_df['label'] == 'positive']
             review_neu = result_df[result_df['label'] == 'neutral']
             review_neg = result_df[result_df['label'] == 'negative']
