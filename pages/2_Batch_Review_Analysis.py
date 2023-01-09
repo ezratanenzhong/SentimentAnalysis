@@ -425,7 +425,7 @@ if submitted:
             st.plotly_chart(fig)
 
         elif viz_option == 'Word Cloud':
-            sentiment_choice = st.selectbox("Select sentiment", ["Positive", "Negative", "Neutral"])
+            sentiment_choice = st.selectbox("Select sentiment", ("Positive", "Negative", "Neutral"))
             if sentiment_choice == "Positive":
                 review_pos = result_df[result_df['label'] == 'positive']
                 review_pos = review_pos['text']
@@ -442,16 +442,16 @@ if submitted:
                 review_neu = result_df[result_df['label'] == 'neutral']
                 review_neu = review_neu['text']
                 st.subheader("Words contain in neutral reviews")
-                wordcloud_draw(review_neg)
+                wordcloud_draw(review_neu)
 
         elif viz_option == 'N-grams':
-            sentiment_choice = st.selectbox("Select n-grams (Number of words)", ["Unigrams", "Bigrams", "Trigrams"])
+            sentiment_choice = st.selectbox("Select n-grams (Number of words)", ("Unigram", "Bigram", "Trigram"))
             review_pos = result_df[result_df['label'] == 'positive']
             review_neu = result_df[result_df['label'] == 'neutral']
             review_neg = result_df[result_df['label'] == 'negative']
 
-            if sentiment_choice == "Unigrams":
-                # positive unigrams
+            if sentiment_choice == "Unigram":
+                # positive unigram
                 unigrams_pos_df = pd.DataFrame(get_ngrams(review_pos['text'], ngram_from=1, ngram_to=1, n=15))
                 unigrams_pos_df.columns = ["Unigram", "Frequency"]
                 unigrams_pos_df = unigrams_pos_df.head(10).sort_values(by='Frequency', ascending=True)
@@ -462,7 +462,7 @@ if submitted:
                 st.write("Top 10 words in positive reviews - UNIGRAM ANALYSIS")
                 st.pyplot(fig)
 
-                # negative unigrams
+                # negative unigram
                 unigrams_neg_df = pd.DataFrame(get_ngrams(review_neg['text'], ngram_from=1, ngram_to=1, n=15))
                 unigrams_neg_df.columns = ["Unigram", "Frequency"]
                 unigrams_neg_df = unigrams_neg_df.head(10).sort_values(by='Frequency', ascending=True)
@@ -473,8 +473,8 @@ if submitted:
                 st.write("Top 10 words in negative reviews - UNIGRAM ANALYSIS")
                 st.pyplot(fig)
 
-            elif sentiment_choice == "Bigrams":
-                # positive bigrams
+            elif sentiment_choice == "Bigram":
+                # positive bigram
                 bigrams_pos_df = pd.DataFrame(get_ngrams(review_pos['text'], ngram_from=2, ngram_to=2, n=15))
                 bigrams_pos_df.columns = ["Bigram", "Frequency"]
                 bigrams_pos_df = bigrams_pos_df.head(10).sort_values(by='Frequency', ascending=True)
@@ -485,7 +485,7 @@ if submitted:
                 st.write("Top 10 words in positive reviews - BIGRAM ANALYSIS")
                 st.pyplot(fig)
 
-                # negative bigrams
+                # negative bigram
                 bigrams_neg_df = pd.DataFrame(get_ngrams(review_neg['text'], ngram_from=2, ngram_to=2, n=15))
                 bigrams_neg_df.columns = ["Bigram", "Frequency"]
                 bigrams_neg_df = bigrams_neg_df.head(10).sort_values(by='Frequency', ascending=True)
@@ -496,8 +496,8 @@ if submitted:
                 st.write("Top 10 words in negative reviews - BIGRAM ANALYSIS")
                 st.pyplot(fig)
 
-            elif sentiment_choice == "Trigrams":
-                # positive trigrams
+            elif sentiment_choice == "Trigram":
+                # positive trigram
                 trigrams_pos_df = pd.DataFrame(get_ngrams(review_pos['text'], ngram_from=3, ngram_to=3, n=15))
                 trigrams_pos_df.columns = ["Trigram", "Frequency"]
                 trigrams_pos_df = trigrams_pos_df.head(10).sort_values(by='Frequency', ascending=True)
@@ -508,7 +508,7 @@ if submitted:
                 st.write("Top 10 words in positive reviews - TRIGRAM ANALYSIS")
                 st.pyplot(fig)
 
-                # negative trigrams
+                # negative trigram
                 trigrams_neg_df = pd.DataFrame(get_ngrams(review_neg['text'], ngram_from=3, ngram_to=3, n=15))
                 trigrams_neg_df.columns = ["Trigram", "Frequency"]
                 trigrams_neg_df = trigrams_neg_df.head(10).sort_values(by='Frequency', ascending=True)
