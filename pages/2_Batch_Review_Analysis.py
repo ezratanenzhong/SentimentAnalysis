@@ -413,18 +413,16 @@ if submitted:
         st.download_button(label="Download Output Data", data=csv, file_name='output.csv', mime='text/csv')
 
         st.subheader('Visualization')
-        
+
         review_pos = result_df[result_df['label'] == 'positive']
         review_pos = review_pos['text']
         st.subheader("Words contain in positive reviews")
         wordcloud_draw(review_pos, 'white')
 
-        entiment_choice == "Negative":
         review_neg = result_df[result_df['label'] == 'negative']
         review_neg = review_neg['text']
         st.subheader("Words contain in negative reviews")
         wordcloud_draw(review_neg)
-
 
 
         count = result_df.groupby('label').count()['text'].reset_index().sort_values(by='text', ascending=False)
