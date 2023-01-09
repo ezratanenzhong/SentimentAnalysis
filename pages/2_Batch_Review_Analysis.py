@@ -414,7 +414,7 @@ if submitted:
         csv = convert_df(result_df)
         st.download_button(label="Download Output Data", data=csv, file_name='output.csv', mime='text/csv')
         st.subheader('Visualization')
-        viz_option = st.radio('Choose plot', ('Bar Chart', 'Word Cloud', 'N-grams'), horizontal=True)
+        viz_option = st.radio('Choose plot', ('Word Cloud', 'Bar Chart', 'N-grams'), horizontal=True)
 
         if viz_option == 'Word Cloud':
                 review_pos = result_df[result_df['label'] == 'positive']
