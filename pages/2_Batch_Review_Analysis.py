@@ -424,20 +424,16 @@ if submitted:
             st.plotly_chart(fig)
 
         elif viz_option == 'Word Cloud':
-            sentiment_choice = st.selectbox('Select sentiment', ('Positive', 'Negative', 'Neutral'))
-            if sentiment_choice == "Positive":
                 review_pos = result_df[result_df['label'] == 'positive']
                 review_pos = review_pos['text']
                 st.subheader("Words contain in positive reviews")
                 wordcloud_draw(review_pos, 'white')
 
-            elif sentiment_choice == "Negative":
                 review_neg = result_df[result_df['label'] == 'negative']
                 review_neg = review_neg['text']
                 st.subheader("Words contain in negative reviews")
                 wordcloud_draw(review_neg)
 
-            elif sentiment_choice == "Neutral":
                 review_neu = result_df[result_df['label'] == 'neutral']
                 review_neu = review_neu['text']
                 st.subheader("Words contain in neutral reviews")
