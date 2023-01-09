@@ -416,14 +416,7 @@ if submitted:
         st.subheader('Visualization')
         viz_option = st.radio('Choose plot', ('Bar Chart', 'Word Cloud', 'N-grams'), horizontal=True)
 
-        if viz_option == 'Bar Chart':
-            count = result_df.groupby('label').count()['text'].reset_index().sort_values(by='text', ascending=False)
-            fig = go.Figure(go.Bar(x=count.label, y=count.text, text=count.text))
-            fig.show()
-            st.subheader("Bar Chart of Sentiment Distribution")
-            st.plotly_chart(fig)
-
-        elif viz_option == 'Word Cloud':
+        if viz_option == 'Word Cloud':
                 review_pos = result_df[result_df['label'] == 'positive']
                 review_pos = review_pos['text']
                 st.subheader("Words contain in positive reviews")
@@ -438,7 +431,13 @@ if submitted:
                 review_neu = review_neu['text']
                 st.subheader("Words contain in neutral reviews")
                 wordcloud_draw(review_neu)
-
+        
+        elif viz_option == 'Bar Chart':
+            count = result_df.groupby('label').count()['text'].reset_index().sort_values(by='text', ascending=False)
+            fig = go.Figure(go.Bar(x=count.label, y=count.text, text=count.text))
+            fig.show()
+            st.subheader("Bar Chart of Sentiment Distribution")
+            st.plotly_chart(fig)
 
     else:
         st.warning('Please upload the file in the required format')
