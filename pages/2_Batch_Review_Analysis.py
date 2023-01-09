@@ -444,7 +444,7 @@ if submitted:
                 st.subheader("Words contain in neutral reviews")
                 wordcloud_draw(review_neu)
 
-        elif viz_option == 'N-grams':
+        else:
             sentiment_choice = st.selectbox("Select n-grams (Number of words)", ("Unigram", "Bigram", "Trigram"))
             review_pos = result_df[result_df['label'] == 'positive']
             review_neu = result_df[result_df['label'] == 'neutral']
