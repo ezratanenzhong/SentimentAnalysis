@@ -369,22 +369,12 @@ if submitted:
   if input_text != "":
     result = predict_sentiment(input_text)
     st.write("### Predicted sentiment label")
-    col1, col2 = st.columns(2)
-    with col1:
-        if result == "['positive']":
-            st.success(result)
-        elif result == "['negative']":
-            st.error(result)
-        else:
-            st.warning(result)
-
-    with col2:
-        if result == "['positive']":
-            st.image("love.png")
-        elif result == "['negative']":
-            st.image("sad.png")
-        else:
-            st.image("neutral face.png")
+    if result == "['positive']":
+        st.success("Positive")
+    elif result == "['negative']":
+        st.error("Negative")
+    else:
+        st.warning("Neutral")
 
     probability = predict_sentiment_proba(input_text)
     sentiment = ['negative', 'neutral', 'positive']
