@@ -4,12 +4,13 @@ import string
 import re
 import numpy as np
 import matplotlib.pyplot as plt
+import nltk
 import pickle
 from plotly import graph_objs as go
+from sklearn.feature_extraction.text import CountVectorizer
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from wordcloud import WordCloud, STOPWORDS
-import nltk
 
 nltk.download('wordnet')
 nltk.download('omw-1.4')
@@ -19,18 +20,18 @@ nltk.download('stopwords')
 with st.sidebar:
     st.write('This page can analyze the sentiment of multiple reviews.')
     st.image('Image 2.png')
-    st.write(' - Upload a file in the required format and let the analyzer do the work!')
-    st.write(' - A table with the review text and their sentiment labels will be displayed.')
-    st.write(' - Choose the type of visualization')
-    st.write(' - Click Bar Chart button to view the distribution of the sentiment labels.')
-    st.write(' - Click Wordcloud button to view the words contain in positive and negative sentiment sentence.')
-    st.write(' - Click Both button to view both plots side by side.')
+    st.write('1. Upload a file in the required format and let the analyzer do the work!')
+    st.write('2. A table with the review text and their sentiment labels will be displayed.')
+    st.write('  - Click Download Output button if you want to download the output table.')
+    st.write('3. Choose the type of visualization')
+    st.write('  - Click Bar Chart button to view the distribution of the sentiment labels.')
+    st.write('  - Click Wordcloud button to view the words contain in positive and negative sentiment sentence.')
 
 st.header("Batch Review Prediction")
-st.write('Upload a CSV file which contains **one column** only - the text column. See example below:')
+st.write("Upload reviews as .csv file which contains the review's column with **column name = text** See example below:")
 example = pd.read_csv("example.csv")
 st.write(example.head())
-upload_file = st.file_uploader("Upload file", type=["csv"])
+upload_file = st.file_uploader("Note: If the uploaded file is large, it may take up to few minutes.", type=["csv"])
 
 model_path = 'finalized_model.pkl'
 vectorizer_path = 'vectorizer.pkl'
@@ -352,6 +353,16 @@ def clean_text(text):
     text = lemmatization(text)
     return text
 
+# n-grams
+def get_ngrams(text, ngram_from=2, ngram_to=2, n=None):
+    vec = CountVectorizer(ngram_range=(ngram_from, ngram_to)).fit(text)
+    bag_of_words = vec.transform(text)
+    sum_words = bag_of_words.sum(axis=0)
+    words_freq = [(word, sum_words[0, i]) for word, i in vec.vocabulary_.items()]
+    words_freq = sorted(words_freq, key=lambda x: x[1], reverse=True)
+
+    return words_freq[:n]
+
 # generate word cloud
 def wordcloud_draw(data, color='black'):
     words = ' '.join(data)
@@ -384,66 +395,131 @@ def predict_sentiment_batch(review):
     output = pd.DataFrame(data=label_list, columns=['label'])
     return output
 
-if upload_file is not None:
-    df = pd.read_csv(upload_file)
-    # df = df.drop(columns=['Unnamed: 0'])
-    input_list = df['text'].tolist()
-    predict_output = pd.DataFrame(predict_sentiment_batch(input_list))
-    result_df = df.assign(label=predict_output)
-    st.subheader('Result')
-    st.info('Table showing first five rows of text and its sentiment label')
-    st.write(result_df)
+submitted = st.button('Analyze')
+if submitted:
+    if upload_file is not None:
+        df = pd.read_csv(upload_file, encoding='latin-1')
+        input_list = df['text'].tolist()
+        predict_output = pd.DataFrame(predict_sentiment_batch(input_list))
+        result_df = df.assign(label=predict_output)
+        result_df = result_df.drop(columns=['Unnamed: 0'])
+        st.subheader('Result')
+        st.write(result_df)
 
-    @st.cache
-    def convert_df(data):
-        # Cache the conversion to prevent computation on every rerun
-        return data.to_csv().encode('utf-8')
+        @st.cache
+        def convert_df(data):
+            # Cache the conversion to prevent computation on every rerun
+            return data.to_csv().encode('utf-8')
 
-    csv = convert_df(result_df)
-    st.download_button(label="Download data as CSV", data=csv, file_name='output.csv', mime='text/csv')
-    # categorise the text based on positive and negative
-    st.subheader('Visualization')
-    viz_option = st.radio('Choose plot', ('Bar Chart', 'Word Cloud', 'Both (Bar Chart & Word Cloud)'), horizontal=True)
+        csv = convert_df(result_df)
+        st.download_button(label="Download Output Data", data=csv, file_name='output.csv', mime='text/csv')
+        # categorise the text based on positive and negative
+        st.subheader('Visualization')
+        viz_option = st.radio('Choose plot', ('Bar Chart', 'Word Cloud', 'N-grams'), horizontal=True)
 
-    #wordcloud_button = st.button('Display Word Cloud')
-    if viz_option == 'Word Cloud':
-        review_pos = result_df[result_df['label'] == 'positive']
-        review_pos = result_df['text']
-        review_neg = result_df[result_df['label'] == 'negative']
-        review_neg = review_neg['text']
-
-        st.subheader("Words contain in positive reviews")
-        wordcloud_draw(review_pos, 'white')
-        st.subheader("Words contain in negative reviews")
-        wordcloud_draw(review_neg)
-
-    #plot = st.button('Plot sentiment distribution')
-    if viz_option == 'Bar Chart':
-        count = result_df.groupby('label').count()['text'].reset_index().sort_values(by='text', ascending=False)
-        fig = go.Figure(go.Bar(x=count.label, y=count.text, text=count.text))
-        fig.show()
-        st.subheader("Bar Chart of Sentiment Distribution")
-        st.plotly_chart(fig, theme="streamlit")
-
-    if viz_option == 'Both (Bar Chart & Word Cloud)':
-        col1, col2 = st.columns(2)
-        with col1:
-            review_pos = result_df[result_df['label'] == 'positive']
-            review_pos = result_df['text']
-            review_neg = result_df[result_df['label'] == 'negative']
-            review_neg = review_neg['text']
-
-            st.subheader("Words contain in positive reviews")
-            wordcloud_draw(review_pos, 'white')
-            st.subheader("Words contain in negative reviews")
-            wordcloud_draw(review_neg)
-
-        with col2:
+        if viz_option == 'Bar Chart':
             count = result_df.groupby('label').count()['text'].reset_index().sort_values(by='text', ascending=False)
             fig = go.Figure(go.Bar(x=count.label, y=count.text, text=count.text))
             fig.show()
             st.subheader("Bar Chart of Sentiment Distribution")
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig)
 
-else:
-    st.warning('Please upload the file in the required format')
+        if viz_option == 'Word Cloud':
+            sentiment_choice = st.selectbox("Select sentiment", ["Positive", "Negative", "Neutral"],
+                                            label_visibility="hidden")
+            if sentiment_choice == "Positive":
+                review_pos = result_df[result_df['label'] == 'positive']
+                review_pos = review_pos['text']
+                st.subheader("Words contain in positive reviews")
+                wordcloud_draw(review_pos, 'white')
+
+            if sentiment_choice == "Negative":
+                review_neg = result_df[result_df['label'] == 'negative']
+                review_neg = review_neg['text']
+                st.subheader("Words contain in negative reviews")
+                wordcloud_draw(review_neg)
+
+            if sentiment_choice == "Neutral":
+                review_neu = result_df[result_df['label'] == 'neutral']
+                review_neu = review_neu['text']
+                st.subheader("Words contain in neutral reviews")
+                wordcloud_draw(review_neg)
+
+        if viz_option == 'N-grams':
+            sentiment_choice = st.selectbox("Select n-grams (Number of words)", ["Unigrams", "Bigrams", "Trigrams"],
+                                            label_visibility="hidden")
+            review_pos = result_df[result_df['label'] == 'positive']
+            review_neu = result_df[result_df['label'] == 'neutral']
+            review_neg = result_df[result_df['label'] == 'negative']
+
+            if sentiment_choice == "Unigrams":
+                # positive unigrams
+                unigrams_pos_df = pd.DataFrame(get_ngrams(review_pos['text'], ngram_from=1, ngram_to=1, n=15))
+                unigrams_pos_df.columns = ["Unigram", "Frequency"]
+                unigrams_pos_df = unigrams_pos_df.head(10).sort_values(by='Frequency', ascending=True)
+                fig, ax = plt.subplots()
+                ax.barh("Unigram", "Frequency", color='green', height=0.4, data=unigrams_pos_df)
+                ax.xlabel("Count")
+                ax.ylabel("Words in positive reviews")
+                st.write("Top 10 words in positive reviews - UNIGRAM ANALYSIS")
+                st.pyplot(fig)
+
+                # negative unigrams
+                unigrams_neg_df = pd.DataFrame(get_ngrams(review_neg['text'], ngram_from=1, ngram_to=1, n=15))
+                unigrams_neg_df.columns = ["Unigram", "Frequency"]
+                unigrams_neg_df = unigrams_neg_df.head(10).sort_values(by='Frequency', ascending=True)
+                fig, ax = plt.subplots()
+                plt.barh("Unigram", "Frequency", color='red', height=0.4, data=unigrams_neg_df)
+                ax.xlabel("Count")
+                ax.ylabel("Words in negative reviews")
+                st.write("Top 10 words in negative reviews - UNIGRAM ANALYSIS")
+                st.pyplot(fig)
+
+            if sentiment_choice == "Bigrams":
+                # positive bigrams
+                bigrams_pos_df = pd.DataFrame(get_ngrams(review_pos['text'], ngram_from=2, ngram_to=2, n=15))
+                bigrams_pos_df.columns = ["Bigram", "Frequency"]
+                bigrams_pos_df = bigrams_pos_df.head(10).sort_values(by='Frequency', ascending=True)
+                fig, ax = plt.subplots()
+                ax.barh("Bigram", "Frequency", color='green', height=0.4, data=bigrams_pos_df)
+                ax.xlabel("Count")
+                ax.ylabel("Words in positive reviews")
+                st.write("Top 10 words in positive reviews - BIGRAM ANALYSIS")
+                st.pyplot(fig)
+
+                # negative bigrams
+                bigrams_neg_df = pd.DataFrame(get_ngrams(review_neg['text'], ngram_from=2, ngram_to=2, n=15))
+                bigrams_neg_df.columns = ["Bigram", "Frequency"]
+                bigrams_neg_df = bigrams_neg_df.head(10).sort_values(by='Frequency', ascending=True)
+                fig, ax = plt.subplots()
+                ax.barh("Bigram", "Frequency", color='red', height=0.4, data=bigrams_neg_df)
+                ax.xlabel("Count")
+                ax.ylabel("Words in negative reviews")
+                st.write("Top 10 words in negative reviews - BIGRAM ANALYSIS")
+                st.pyplot(fig)
+
+            if sentiment_choice == "Trigrams":
+                # positive trigrams
+                trigrams_pos_df = pd.DataFrame(get_ngrams(review_pos['text'], ngram_from=3, ngram_to=3, n=15))
+                trigrams_pos_df.columns = ["Trigram", "Frequency"]
+                trigrams_pos_df = trigrams_pos_df.head(10).sort_values(by='Frequency', ascending=True)
+                fig, ax = plt.subplots()
+                ax.barh("Trigram", "Frequency", color='green', height=0.4, data=trigrams_pos_df)
+                ax.xlabel("Count")
+                ax.ylabel("Words in positive reviews")
+                st.write("Top 10 words in positive reviews - TRIGRAM ANALYSIS")
+                st.pyplot(fig)
+
+                # negative trigrams
+                trigrams_neg_df = pd.DataFrame(get_ngrams(review_neg['text'], ngram_from=3, ngram_to=3, n=15))
+                trigrams_neg_df.columns = ["Trigram", "Frequency"]
+                trigrams_neg_df = trigrams_neg_df.head(10).sort_values(by='Frequency', ascending=True)
+                fig, ax = plt.subplots()
+                ax.barh("Trigram", "Frequency", color='red', height=0.4, data=trigrams_neg_df)
+                ax.xlabel("Count")
+                ax.ylabel("Words in negative reviews")
+                st.write("Top 10 words in negative reviews - TRIGRAM ANALYSIS")
+                st.pyplot(fig)
+
+    else:
+        st.warning('Please upload the file in the required format')
