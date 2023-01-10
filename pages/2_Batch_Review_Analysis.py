@@ -448,7 +448,7 @@ if st.session_state.stage > 0:
                 st.subheader("Bar Chart of Sentiment Distribution")
                 st.plotly_chart(fig)
 
-            else:
+            elif viz_option == 'N-grams':
                 ngram_option = st.selectbox("Select n-grams (Number of word sequence)", ("Unigram", "Bigram", "Trigram"))
                 review_pos = result_df[result_df['label'] == 'positive']
                 review_neu = result_df[result_df['label'] == 'neutral']
@@ -460,8 +460,6 @@ if st.session_state.stage > 0:
                     unigrams_pos_df = unigrams_pos_df.head(10).sort_values(by='Frequency', ascending=True)
                     fig, ax = plt.subplots()
                     ax.barh("Unigram", "Frequency", color='green', height=0.4, data=unigrams_pos_df)
-                    fig.xlabel("Count")
-                    fig.ylabel("Words in positive reviews")
                     st.write("Top 10 words in positive reviews - UNIGRAM ANALYSIS")
                     st.pyplot(fig)
 
@@ -471,8 +469,6 @@ if st.session_state.stage > 0:
                     unigrams_neg_df = unigrams_neg_df.head(10).sort_values(by='Frequency', ascending=True)
                     fig, ax = plt.subplots()
                     plt.barh("Unigram", "Frequency", color='red', height=0.4, data=unigrams_neg_df)
-                    fig.xlabel("Count")
-                    fig.ylabel("Words in negative reviews")
                     st.write("Top 10 words in negative reviews - UNIGRAM ANALYSIS")
                     st.pyplot(fig)
 
@@ -483,8 +479,6 @@ if st.session_state.stage > 0:
                     bigrams_pos_df = bigrams_pos_df.head(10).sort_values(by='Frequency', ascending=True)
                     fig, ax = plt.subplots()
                     ax.barh("Bigram", "Frequency", color='green', height=0.4, data=bigrams_pos_df)
-                    fig.xlabel("Count")
-                    fig.ylabel("Words in positive reviews")
                     st.write("Top 10 words in positive reviews - BIGRAM ANALYSIS")
                     st.pyplot(fig)
 
@@ -494,8 +488,6 @@ if st.session_state.stage > 0:
                     bigrams_neg_df = bigrams_neg_df.head(10).sort_values(by='Frequency', ascending=True)
                     fig, ax = plt.subplots()
                     ax.barh("Bigram", "Frequency", color='red', height=0.4, data=bigrams_neg_df)
-                    fig.xlabel("Count")
-                    fig.ylabel("Words in negative reviews")
                     st.write("Top 10 words in negative reviews - BIGRAM ANALYSIS")
                     st.pyplot(fig)
 
@@ -506,8 +498,6 @@ if st.session_state.stage > 0:
                     trigrams_pos_df = trigrams_pos_df.head(10).sort_values(by='Frequency', ascending=True)
                     fig, ax = plt.subplots()
                     ax.barh("Trigram", "Frequency", color='green', height=0.4, data=trigrams_pos_df)
-                    fig.xlabel("Count")
-                    fig.ylabel("Words in positive reviews")
                     st.write("Top 10 words in positive reviews - TRIGRAM ANALYSIS")
                     st.pyplot(fig)
 
@@ -517,8 +507,6 @@ if st.session_state.stage > 0:
                     trigrams_neg_df = trigrams_neg_df.head(10).sort_values(by='Frequency', ascending=True)
                     fig, ax = plt.subplots()
                     ax.barh("Trigram", "Frequency", color='red', height=0.4, data=trigrams_neg_df)
-                    fig.xlabel("Count")
-                    fig.ylabel("Words in negative reviews")
                     st.write("Top 10 words in negative reviews - TRIGRAM ANALYSIS")
                     st.pyplot(fig)
 
