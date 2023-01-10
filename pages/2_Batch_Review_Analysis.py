@@ -398,13 +398,12 @@ model = pickle.load(open(model_path, 'rb'))
 vectorizer = pickle.load(open(vectorizer_path, 'rb'))
 
 submitted = st.button('Analyze')
-if submitted:
+while submitted:
     if upload_file is not None:
         df = pd.read_csv(upload_file, encoding='latin-1')
         input_list = df['text'].tolist()
         predict_output = pd.DataFrame(predict_sentiment_batch(input_list))
         result_df = df.assign(label=predict_output)
-        result_df = result_df.drop(columns=['Unnamed: 0'])
         st.subheader('Result')
         st.write(result_df)
         @st.cache
@@ -415,7 +414,7 @@ if submitted:
         st.download_button(label="Download Output Data", data=csv, file_name='output.csv', mime='text/csv')
 
         st.subheader('Visualization')
-        viz_option = st.radio('Choose plot', ('Bar Chart', 'Word Cloud', 'N-grams'), horizontal=True)
+        viz_option = st.radio('Choose plot', ('N-grams', 'Bar Chart', 'Word Cloud'), horizontal=True)
         if viz_option == 'Word Cloud':
             sentiment_choice = st.selectbox('Select sentiment', ('Positive', 'Negative', 'Neutral'))
             if sentiment_choice == "Positive":
