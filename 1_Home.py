@@ -1,6 +1,6 @@
 import streamlit as st
 
-st.set_page_config(page_title='Reviewalyze', initial_sidebar_state="expanded")
+st.set_page_config(page_title='Reviewalyze', initial_sidebar_state="expanded", layout="wide")
 
 st.title("Reviewalyze")
 col1, col2 = st.columns(2)
