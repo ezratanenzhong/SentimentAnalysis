@@ -249,23 +249,28 @@ abbreviations = {
 
 # Remove all english stopwords
 def remove_stopwords(text):
-    text = ' '.join([word for word in text.split() if word not in stopwords.words("english")])
+    stop_words = stopwords.words("english")
+    custom_stop_words = ['walmart', 'wal', 'mart']
+    omit_stop_words = ['not', 'nor']
+    stop_words.extend(custom_stop_words)
+    stop_words = [el for el in stop_words if el not in omit_stop_words]
+    text = ' '.join([word for word in text.split() if word not in stop_words])
     return text
 
 # Remove all punctuations
 def remove_all_punct(text):
-    table = str.maketrans('', '', string.punctuation)
+    table = str.maketrans('','',string.punctuation)
     return text.translate(table)
 
 # Remove all URLs, replace by URL
 def remove_URL(text):
     url = re.compile(r'https?://\S+|www\.\S+')
-    return url.sub(r'URL', str(text))
+    return url.sub(r'URL',str(text))
 
 # Remove HTML beacon
 def remove_HTML(text):
-    html = re.compile(r'<.*?>')
-    return html.sub(r'', text)
+    html=re.compile(r'<.*?>')
+    return html.sub(r'',text)
 
 # Remove non printable characters
 def remove_not_ASCII(text):
@@ -285,31 +290,31 @@ def replace_abbrev(text):
 
 # Remove @ and mention, replace by USER
 def remove_mention(text):
-    at = re.compile(r'@\S+')
-    return at.sub(r'USER', text)
+    at=re.compile(r'@\S+')
+    return at.sub(r'USER',text)
 
-# Remove numbers, replace it by NUMBER
+# Remove numbers
 def remove_number(text):
-    num = re.compile(r'[-+]?[.\d]*[\d]+[:,.\d]*')
-    return num.sub(r'NUMBER', text)
+    return re.sub(r'\d+', '', text)
 
 # Remove emoji
 def remove_emoji(string):
     emoji_pattern = re.compile("["
-                               u"\U0001F600-\U0001F64F"  # emoticons
-                               u"\U0001F300-\U0001F5FF"  # symbols & pictographs
-                               u"\U0001F680-\U0001F6FF"  # transport & map symbols
-                               u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
-                               u"\U00002702-\U000027B0"
-                               u"\U000024C2-\U0001F251"
-                               "]+", flags=re.UNICODE)
+                           u"\U0001F600-\U0001F64F" # emoticons
+                           u"\U0001F300-\U0001F5FF" # symbols & pictographs
+                           u"\U0001F680-\U0001F6FF" # transport & map symbols
+                           u"\U0001F1E0-\U0001F1FF" # flags (iOS)
+                           u"\U00002702-\U000027B0"
+                           u"\U000024C2-\U0001F251"
+                           "]+", flags=re.UNICODE)
     return emoji_pattern.sub(r'', string)
 
 # lemmatize text (convert to root form of text)
 def lemmatization(text):
-    lm = WordNetLemmatizer()
+    lm= WordNetLemmatizer()
     text = ' '.join([lm.lemmatize(word, pos='v') for word in text.split()])
     return text
+
 
 def clean_text(text):
     # lowercase text and remove punctuation
@@ -330,6 +335,7 @@ def clean_text(text):
     # Remove stopwords and lemmatize text
     text = remove_stopwords(text)
     text = lemmatization(text)
+
     return text
 
 # n-grams
@@ -478,7 +484,7 @@ if st.session_state.stage > 0:
                     ax.barh("Bigram", "Frequency", color='yellow', height=0.4, data=bigrams_neu_df)
                     st.write("Top 10 words in negative reviews - BIGRAM ANALYSIS")
                     st.pyplot(fig)
-                    
+
                 elif ngram_option == "Trigram":
                     # positive trigram
                     trigrams_pos_df = pd.DataFrame(get_ngrams(review_pos['clean_text'], ngram_from=3, ngram_to=3, n=15))
@@ -497,7 +503,7 @@ if st.session_state.stage > 0:
                     ax.barh("Trigram", "Frequency", color='red', height=0.4, data=trigrams_neg_df)
                     st.write("Top 10 words in negative reviews - TRIGRAM ANALYSIS")
                     st.pyplot(fig)
-                    
+
                     # neutral trigram
                     trigrams_neu_df = pd.DataFrame(get_ngrams(review_neu['clean_text'], ngram_from=3, ngram_to=3, n=15))
                     trigrams_neu_df.columns = ["Trigram", "Frequency"]
