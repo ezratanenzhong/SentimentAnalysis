@@ -4,9 +4,9 @@ st.set_page_config(layout='wide')
 st.header('About')
 st.markdown("""**Reviewalyze** is a web application to analyze reviews provided by customers. The name is inspired by words like review, analyze and realize.
             Simply input a review and the model will predict whether its sentiment is positive, negative, or neutral.
-            User can also analyze multiple reviews by uploading them in a CSV file.
+            User can also analyze multiple reviews by uploading them in a CSV file. User can view and downlaod the output as well as view the visualizations of result.
             The main purpose of analyzing the reviews is to improve customer satisfaction for businesses or to understand the sentiment of a brand or product.
-            The model is trained with data scraped from Walmart's, Target's and JoMalone's Facebook reviews.""")
+            The Support Vector Classification model is trained with data scraped from Walmart's Facebook reviews. """)
 
 st.header("User Manual")
 
@@ -28,6 +28,7 @@ st.markdown("""1. Click **Browse file** button to upload a file with the require
 - Column name must be **text**
 - Reviews can only be in English""")
 st.write("2. Click **Analyze** button. ")
+st.image('user_manual_3.png')
 st.write("3. A table with the reviews and their predicted sentiment labels will be displayed. Click **Download data as CSV** button to download the result data.")
 st.markdown("""4. At the Visualization section, choose the type of plot to view:
 - Click **Bar Chart** button to view the distribution of the sentiment labels
@@ -35,5 +36,5 @@ st.markdown("""4. At the Visualization section, choose the type of plot to view:
 - CLick **N-grams** button to view the N-gram words in positive and negative sentiment sentences""")
 
 st.markdown("Any question can email me via ezratan2001@gmail.com")
-st.write("Can contact me through my LinkedIn too: [link](https://www.linkedin.com/in/ezra-tan-en-zhong/)")
+st.write("Can contact me through my [LinkedIn](https://www.linkedin.com/in/ezra-tan-en-zhong/)")
 
