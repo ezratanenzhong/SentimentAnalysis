@@ -457,7 +457,7 @@ if st.session_state.stage > 0:
                 review_pos = result_df[result_df['label'] == 'positive']
                 review_neu = result_df[result_df['label'] == 'neutral']
                 review_neg = result_df[result_df['label'] == 'negative']
-                if ngram_option == "Bigram":
+                if ngram_option == "Unigram":
                     # positive unigram
                     unigrams_pos_df = pd.DataFrame(get_ngrams(review_pos['clean_text'], ngram_from=1, ngram_to=1, n=15))
                     unigrams_pos_df.columns=["Unigram", "Frequency"]
