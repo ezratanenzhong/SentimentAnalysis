@@ -424,7 +424,7 @@ if st.session_state.stage > 0:
         st.download_button(label="Download Output Data", data=csv, file_name='output.csv', mime='text/csv')
 
         st.subheader('Visualization')
-        viz_option = st.radio('Choose plot', ('Bar Chart', 'Word Cloud', 'N-grams'), horizontal=True)
+        viz_option = st.radio('Choose plot', ('Sentiment Distribution', 'Word Cloud', 'Word occurrence frequency'), horizontal=True)
         plot_button = st.button('Plot', on_click=set_stage, args=(2,))
         if st.session_state.stage > 1:
             if viz_option == 'Word Cloud':
@@ -445,14 +445,14 @@ if st.session_state.stage > 0:
                     st.subheader("Words contain in neutral reviews")
                     wordcloud_draw(review_neu)
 
-            elif viz_option == 'Bar Chart':
+            elif viz_option == 'Sentiment distribution':
                 count = result_df.groupby('label').count()['text'].reset_index().sort_values(by='text', ascending=False)
                 fig = go.Figure(go.Bar(x=count.label, y=count.text, text=count.text))
                 fig.show()
                 st.subheader("Bar Chart of Sentiment Distribution")
                 st.plotly_chart(fig)
 
-            elif viz_option == 'N-grams':
+            elif viz_option == 'Word occurrence frequency':
                 ngram_option = st.selectbox("Select n-grams (Number of word sequence)", ("Bigram", "Trigram"))
                 review_pos = result_df[result_df['label'] == 'positive']
                 review_neu = result_df[result_df['label'] == 'neutral']
