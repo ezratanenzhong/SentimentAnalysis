@@ -467,13 +467,22 @@ if st.session_state.stage > 0:
                     st.write("Top 10 words in positive reviews - UNIGRAM ANALYSIS")
                     st.pyplot(fig)
                     
-                    # get unigrams
+                    # negative unigrams
                     unigrams_neg_df = pd.DataFrame(get_ngrams(review_neg['clean_text'], ngram_from=1, ngram_to=1, n=15))
                     unigrams_neg_df.columns=["Unigram", "Frequency"]
                     unigrams_neg_df = unigrams_neg_df.head(10).sort_values(by='Frequency', ascending=True)
                     fig, ax = plt.subplots()
-                    ax.barh("Unigram", "Frequency", color='green', height=0.4, data=unigrams_neg_df)
+                    ax.barh("Unigram", "Frequency", color='red', height=0.4, data=unigrams_neg_df)
                     st.write("Top 10 words in negative reviews - UNIGRAM ANALYSIS")
+                    st.pyplot(fig)
+                    
+                    # neutral unigrams
+                    unigrams_neu_df = pd.DataFrame(get_ngrams(review_neu['clean_text'], ngram_from=1, ngram_to=1, n=15))
+                    unigrams_neu_df.columns=["Unigram", "Frequency"]
+                    unigrams_neu_df = unigrams_neu_df.head(10).sort_values(by='Frequency', ascending=True)
+                    fig, ax = plt.subplots()
+                    ax.barh("Unigram", "Frequency", color='orange', height=0.4, data=unigrams_neu_df)
+                    st.write("Top 10 words in neutral reviews - UNIGRAM ANALYSIS")
                     st.pyplot(fig)
 
                 if ngram_option == "Bigram":
@@ -500,7 +509,7 @@ if st.session_state.stage > 0:
                     bigrams_neu_df.columns = ["Bigram", "Frequency"]
                     bigrams_neu_df = bigrams_neu_df.head(10).sort_values(by='Frequency', ascending=True)
                     fig, ax = plt.subplots()
-                    ax.barh("Bigram", "Frequency", color='yellow', height=0.4, data=bigrams_neu_df)
+                    ax.barh("Bigram", "Frequency", color='orange', height=0.4, data=bigrams_neu_df)
                     st.write("Top 10 words in negative reviews - BIGRAM ANALYSIS")
                     st.pyplot(fig)
 
@@ -528,7 +537,7 @@ if st.session_state.stage > 0:
                     trigrams_neu_df.columns = ["Trigram", "Frequency"]
                     trigrams_neu_df = trigrams_neu_df.head(10).sort_values(by='Frequency', ascending=True)
                     fig, ax = plt.subplots()
-                    ax.barh("Trigram", "Frequency", color='yellow', height=0.4, data=trigrams_neu_df)
+                    ax.barh("Trigram", "Frequency", color='orange', height=0.4, data=trigrams_neu_df)
                     st.write("Top 10 words in negative reviews - TRIGRAM ANALYSIS")
                     st.pyplot(fig)
 
