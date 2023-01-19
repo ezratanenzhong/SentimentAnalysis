@@ -427,7 +427,7 @@ if st.session_state.stage > 0:
         viz_option = st.radio('Choose plot', ('Sentiment distribution', 'Word cloud', 'Word occurrence frequency'), horizontal=True)
         plot_button = st.button('Plot', on_click=set_stage, args=(2,))
         if st.session_state.stage > 1:
-            if viz_option == 'Word Cloud':
+            if viz_option == 'Word cloud':
                 sentiment_choice = st.selectbox('Select sentiment', ('Positive', 'Negative', 'Neutral'))
                 if sentiment_choice == "Positive":
                     review_pos = result_df[result_df['label'] == 'positive']
@@ -453,10 +453,29 @@ if st.session_state.stage > 0:
                 st.plotly_chart(fig)
 
             elif viz_option == 'Word occurrence frequency':
-                ngram_option = st.selectbox("Select n-grams (Number of word sequence)", ("Bigram", "Trigram"))
+                ngram_option = st.selectbox("Select n-grams (Number of word sequence)", ("Unigram","Bigram","Trigram"))
                 review_pos = result_df[result_df['label'] == 'positive']
                 review_neu = result_df[result_df['label'] == 'neutral']
                 review_neg = result_df[result_df['label'] == 'negative']
+                if ngram_option == "Bigram":
+                    # positive unigram
+                    unigrams_pos_df = pd.DataFrame(get_ngrams(review_pos['clean_text'], ngram_from=1, ngram_to=1, n=15))
+                    unigrams_pos_df.columns=["Unigram", "Frequency"]
+                    unigrams_pos_df = unigrams_pos_df.head(10).sort_values(by='Frequency', ascending=True)
+                    fig, ax = plt.subplots()
+                    ax.barh("Unigram", "Frequency", color='green', height=0.4, data=unigrams_pos_df)
+                    st.write("Top 10 words in positive reviews - UNIGRAM ANALYSIS")
+                    st.pyplot(fig)
+                    
+                    # get unigrams
+                    unigrams_neg_df = pd.DataFrame(get_ngrams(review_neg['clean_text'], ngram_from=1, ngram_to=1, n=15))
+                    unigrams_neg_df.columns=["Unigram", "Frequency"]
+                    unigrams_neg_df = unigrams_neg_df.head(10).sort_values(by='Frequency', ascending=True)
+                    fig, ax = plt.subplots()
+                    ax.barh("Unigram", "Frequency", color='green', height=0.4, data=unigrams_neg_df)
+                    st.write("Top 10 words in negative reviews - UNIGRAM ANALYSIS")
+                    st.pyplot(fig)
+
                 if ngram_option == "Bigram":
                     # positive bigram
                     bigrams_pos_df = pd.DataFrame(get_ngrams(review_pos['clean_text'], ngram_from=2, ngram_to=2, n=15))
