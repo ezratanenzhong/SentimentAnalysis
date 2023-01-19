@@ -424,7 +424,7 @@ if st.session_state.stage > 0:
         st.download_button(label="Download Output Data", data=csv, file_name='output.csv', mime='text/csv')
 
         st.subheader('Visualization')
-        viz_option = st.radio('Choose plot', ('Sentiment Distribution', 'Word Cloud', 'Word occurrence frequency'), horizontal=True)
+        viz_option = st.radio('Choose plot', ('Sentiment distribution', 'Word cloud', 'Word occurrence frequency'), horizontal=True)
         plot_button = st.button('Plot', on_click=set_stage, args=(2,))
         if st.session_state.stage > 1:
             if viz_option == 'Word Cloud':
