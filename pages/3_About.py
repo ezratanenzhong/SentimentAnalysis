@@ -37,4 +37,6 @@ st.markdown("""4. At the Visualization section, choose the type of plot to view:
 
 st.markdown("Any question can email me via ezratan2001@gmail.com")
 st.write("Can contact me through my [LinkedIn](https://www.linkedin.com/in/ezra-tan-en-zhong/)")
+st.write("Github code [click here](https://github.com/ezratanenzhong/SentimentAnalysis)")
+
 
